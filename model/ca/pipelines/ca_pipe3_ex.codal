@@ -47,7 +47,7 @@ event ex : pipeline(pipe.EX)
                 break;
             default:
                 s_ex_src2 = 0;
-                codasip_fatal (SRC2_ERROR, "Default case EX_Multiplexr: %d\n", r_ex_alusrc2);
+                codasip_fatal(SRC2_ERROR, "Default case EX_Multiplexr: %d\n", r_ex_alusrc2);
                 break;
         }
 

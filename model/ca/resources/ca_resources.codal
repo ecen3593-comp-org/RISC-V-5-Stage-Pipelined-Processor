@@ -160,5 +160,5 @@ signal   bit[1] s_wb_clear;
 // -------------------------------------------------------------------------------------------------
 signal bit [BOOLEAN_BIT]            s_syscall_pending;
 signal bit [BOOLEAN_BIT]            s_syscall_stall;
-register bit [TWO_BIT]              r_syscall_delay         {default = 0;};
+register bit [TWO_BIT]              r_syscall_delay         { default = 0; };
 

@@ -48,7 +48,7 @@ event id : pipeline(pipe.ID)
         // Opcode
         // NOTE: '..' indicates extracted bits from a bitfield
         //       '::' indicates concatenation of fields to a signal field
-        s_id_opc = s_id_instr[31..25] :: s_id_instr[14..12] :: s_id_instr[6..0];
+        s_id_opc = s_id_instr [31..25] :: s_id_instr [14..12] :: s_id_instr [6..0];
         
         // First source register
         s_id_rs1 = s_id_instr [19..15];
