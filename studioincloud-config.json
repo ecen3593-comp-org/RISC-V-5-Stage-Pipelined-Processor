@@ -1,9 +1,11 @@
 {
   "generated-ca-sdk": [
     "/home/project/rv32i_ca",
-    "phase5_ca"
+    "phase5_ca",
+    "phase-5-frmc3658"
   ],
   "generated-ia-sdk": [
-    "/home/project/rv32i_ca"
+    "/home/project/rv32i_ca",
+    "phase-5-frmc3658"
   ]
 }

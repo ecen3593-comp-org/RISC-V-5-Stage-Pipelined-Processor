@@ -36,6 +36,35 @@ event ex : pipeline(pipe.EX)
 
     semantics
     {
+        // Multiplexor
+        switch(r_ex_alusrc2)
+        {
+            case ALU2_REG:
+                s_ex_src2 = r_ex_reg2;
+                break;
+            case ALU2_IMM:
+                s_ex_src2 = r_ex_immed;
+                break;
+            default:
+                s_ex_src2 = 0;
+                codasip_fatal (SRC2_ERROR, "Default case EX_Multiplexr: %d\n", r_ex_alusrc2);
+                break;
+        }
+
+        // ALU Component
+        switch(r_ex_aluop)
+        {
+            case ALU_NOP:
+                s_ex_alu = 0;
+                break;
+            case ALU_ADD:
+                s_ex_alu = r_ex_reg1 + s_ex_src2;
+                break;
+            default:
+                s_ex_alu = 0;
+                codasip_fatal(ALU_ERROR, "Default case EX_ALU: %d\n", r_ex_aluop);
+                break;
+        }
 
         // HALT instruction detection
         if (r_ex_halt == HALT_HALT)
@@ -53,6 +82,10 @@ event ex_output : pipeline(pipe.EX)
 {
     semantics
     {
-
+        r_me_pc         = r_ex_pc;
+        r_me_instr      = r_ex_instr;
+        r_me_rd         = r_ex_rd;
+        r_me_regwrite   = r_ex_regwrite;
+        r_me_alu        = s_ex_alu;
     };
 };

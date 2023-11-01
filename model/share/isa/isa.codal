@@ -569,7 +569,7 @@ element i_btype_branches
  * one of the source registers is register 0 and the immediate value is also 0, than the write to the destination
  * register 0 will be 0.
  *
- * For emulated instructions, we use an "e" to begin the element name instead of an "i" which represents instruction
+ * For emulated instructions, we uelementse an "e" to begin the element name instead of an "i" which represents instruction
  * to clarify which elements specify a RISCV instruction versus one that is emulated
  */
 
