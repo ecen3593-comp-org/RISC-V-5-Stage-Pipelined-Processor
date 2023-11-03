@@ -36,6 +36,14 @@ event ex : pipeline(pipe.EX)
 
     semantics
     {
+        // HALT instruction detection
+        if (r_ex_halt == HALT_HALT)
+        {
+            codasip_break();
+            codasip_info(INFO_GENERAL, "Halt Instructions Indicated");
+        }
+
+
         // Multiplexor
         switch(r_ex_alusrc2)
         {
@@ -64,13 +72,6 @@ event ex : pipeline(pipe.EX)
                 s_ex_alu = 0;
                 codasip_fatal(ALU_ERROR, "Default case EX_ALU: %d\n", r_ex_aluop);
                 break;
-        }
-
-        // HALT instruction detection
-        if (r_ex_halt == HALT_HALT)
-        {
-            codasip_break();
-            codasip_info(INFO_GENERAL, "Halt Instructions Indicated");
         }
 
         // Timing
