@@ -97,8 +97,8 @@ register bit[RF_XPR_W] r_ex_rd                  { pipeline = pipe.EX; };
 
 // Pipelined Register File Registers
 register bit[REGWRITE_W] r_ex_regwrite          { pipeline = pipe.EX; };
-register bit[WORD_W] r_ex_reg1                  { pipeline = pipe.EX; };
-register bit[WORD_W] r_ex_reg2                  { pipeline = pipe.EX; };
+// register bit[WORD_W] r_ex_reg1                  { pipeline = pipe.EX; };
+// register bit[WORD_W] r_ex_reg2                  { pipeline = pipe.EX; };
 
 // Pipelined Mux Registers
 register bit[WORD_W] r_ex_immed                 { pipeline = pipe.EX; };
@@ -153,7 +153,7 @@ register bit[ADDR_W] r_wb_pc            		{ pipeline = pipe.WB; };
 register bit[INSTR_W] r_wb_instr                { pipeline = pipe.WB; };
 
 // Pipelined Destination Register
-register bit[RF_XPR_W] r_wb_rd                   { pipeline = pipe.WB; };
+register bit[RF_XPR_W] r_wb_rd                  { pipeline = pipe.WB; };
 
 // Pipelined ALU Register
 register bit[WORD_W] r_wb_alu                  { pipeline = pipe.WB; };
