@@ -108,10 +108,10 @@ event ex : pipeline(pipe.EX)
             case FWDA_SRC1:
                 s_ex_fwdA_out = r_ex_src1;
                 break;
-            case FWDA_ME:
+            case FWDA_ALU_ME:
                 s_ex_fwdA_out = r_me_alu;
                 break;
-            case FWDA_WB:
+            case FWDA_DATA_WB:
                 s_ex_fwdA_out = r_wb_alu;
                 break;
             default:
@@ -126,10 +126,10 @@ event ex : pipeline(pipe.EX)
             case FWDB_SRC2:
                 s_ex_fwdB_out = r_ex_src2;
                 break;
-            case FWDB_ME:
+            case FWDB_ALU_ME:
                 s_ex_fwdB_out = r_me_alu;
                 break;
-            case FWDB_WB:
+            case FWDB_DATA_WB:
                 s_ex_fwdB_out = r_wb_alu;
                 break;
             default:

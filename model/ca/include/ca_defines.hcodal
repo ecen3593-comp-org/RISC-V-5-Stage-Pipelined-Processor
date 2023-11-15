@@ -40,8 +40,8 @@
 #define HALT_W          bitsizeof(enum halt)
 #define RFF1_W          bitsizeof(enum rff1_sel)    // New signal size (Phase 6)
 #define RFF2_W          bitsizeof(enum rff2_sel)    // New signal size (Phase 6)
-#define FWDA_W         bitsizeof(enum fwdA_sel)     // New signal size (Phase 6)
-#define FWDB_W         bitsizeof(enum fwdb_sel)     // New signal size (Phase 6)
+#define FWDA_W          bitsizeof(enum fwdA_sel)    // New signal size (Phase 6)
+#define FWDB_W          bitsizeof(enum fwdB_sel)    // New signal size (Phase 6)
 // -------------------------------------------------------------------------------------------------
 // Enumerations
 // -------------------------------------------------------------------------------------------------
