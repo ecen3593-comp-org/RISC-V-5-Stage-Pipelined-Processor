@@ -18,8 +18,8 @@
  * file, may be use, copied, modified, or distributed except in accordance with the terms contained
  * in Codasip license agreement under which you obtained this file.
  *
- *  \file   ca_
- *  """""""""""""""""""""""""""""resources.codal
+ *  \file   ca_resources.codal
+ *  """""""""""""""""""""""""""""
  *  \author Codasip
  *  \date   09.02.2022
  *  \brief  cycle accurate model
@@ -74,7 +74,7 @@ signal bit[WORD_W] s_id_reg2;
 // Immediate Signal
 signal bit[WORD_W] s_id_immed;
 
-//Instruction opcode + func3 + func7
+// Instruction opcode + func3 + func7
 signal bit[OPC_W] s_id_opc;
 
 // Register file select lines (Phase 6)
@@ -123,9 +123,9 @@ signal bit[FWDB_W] s_ex_fwdB_sel;
 signal bit[WORD_W] s_ex_fwdA_out;
 signal bit[WORD_W] s_ex_fwdB_out;
 
-// Pipelined Registers for FWDCTRL
-register bit[WORD_W] r_ex_rs1                { pipeline = pipe.EX; };
-register bit[WORD_W] r_ex_rs2                { pipeline = pipe.EX; };
+// Pipelined Registers for FWDCTRL *Phase 6)
+register bit[RF_XPR_W] r_ex_rs1                 { pipeline = pipe.EX; };
+register bit[RF_XPR_W] r_ex_rs2                 { pipeline = pipe.EX; };
 
 // -------------------------------------------------------------------------------------------------
 // Memory stage

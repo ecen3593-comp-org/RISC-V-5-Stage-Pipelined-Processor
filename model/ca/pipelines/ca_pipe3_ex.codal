@@ -37,40 +37,10 @@ event ex : pipeline(pipe.EX)
     semantics
     {
         // HALT instruction detection
-        if (r_ex_halt == HALT_HALT)
+        if(r_ex_halt == HALT_HALT)
         {
             codasip_break();
             codasip_info(INFO_GENERAL, "Halt Instructions Indicated");
-        }
-
-        // Multiplexor
-        switch(r_ex_alusrc2)
-        {
-            case ALU2_REG:
-                s_ex_src2 = r_ex_reg2;
-                break;
-            case ALU2_IMM:
-                s_ex_src2 = r_ex_immed;
-                break;
-            default:
-                s_ex_src2 = 0;
-                codasip_fatal(SRC2_ERROR, "Default case EX_Multiplexr: %d\n", r_ex_alusrc2);
-                break;
-        }
-
-        // ALU Component
-        switch(r_ex_aluop)
-        {
-            case ALU_NOP:
-                s_ex_alu = 0;
-                break;
-            case ALU_ADD:
-                s_ex_alu = r_ex_reg1 + s_ex_src2;
-                break;
-            default:
-                s_ex_alu = 0;
-                codasip_fatal(ALU_ERROR, "Default case EX_ALU: %d\n", r_ex_aluop);
-                break;
         }
 
         // Forward Control Select1
@@ -78,7 +48,7 @@ event ex : pipeline(pipe.EX)
         {
             s_ex_fwdA_sel = FWDA_ALU_ME;
         }
-        else if ((r_ex_rs1 == r_wb_rd) && (r_wb_rd != 0) && (r_wb_regwrite))
+        else if((r_ex_rs1 == r_wb_rd) && (r_wb_rd != 0) && (r_wb_regwrite))
         {
             s_ex_fwdA_sel = FWDA_DATA_WB;
         }
@@ -88,11 +58,11 @@ event ex : pipeline(pipe.EX)
         }
         
         // Forward Control Select2
-        if ((r_ex_rs2 == r_me_rd) && (r_me_rd != 0) && (r_me_regwrite))
+        if((r_ex_rs2 == r_me_rd) && (r_me_rd != 0) && (r_me_regwrite))
         {
             s_ex_fwdB_sel = FWDB_ALU_ME;
         }
-        else if ((r_ex_rs2 == r_wb_rd) && (r_wb_rd != 0) && (r_wb_regwrite))
+        else if((r_ex_rs2 == r_wb_rd) && (r_wb_rd != 0) && (r_wb_regwrite))
         {
             s_ex_fwdB_sel = FWDB_DATA_WB;
         }
@@ -115,7 +85,7 @@ event ex : pipeline(pipe.EX)
                 s_ex_fwdA_out = r_wb_alu;
                 break;
             default:
-                s_ex_fwdA_out = 0;
+                // s_ex_fwdA_out = 0;
                 // codasip_fatal(ALU_ERROR, "Default case EX_FWDA Multiplexor: %d\n", s_ex_fwdA_sel);
                 break;
         }
@@ -133,8 +103,38 @@ event ex : pipeline(pipe.EX)
                 s_ex_fwdB_out = r_wb_alu;
                 break;
             default:
-                s_ex_fwdB_out = 0;
+                // s_ex_fwdB_out = 0;
                 // codasip_fatal(ALU_ERROR, "Default case EX_FWDB Multiplexor: %d\n", s_ex_fwdB_sel);
+                break;
+        }
+
+        // Multiplexor
+        switch(r_ex_alusrc2)
+        {
+            case ALU2_REG:
+                s_ex_src2 = s_ex_fwdB_out;
+                break;
+            case ALU2_IMM:
+                s_ex_src2 = r_ex_immed;
+                break;
+            default:
+                s_ex_src2 = 0;
+                codasip_fatal(SRC2_ERROR, "Default case EX_Multiplexr: %d\n", r_ex_alusrc2);
+                break;
+        }
+
+        // ALU Component
+        switch(r_ex_aluop)
+        {
+            case ALU_NOP:
+                s_ex_alu = 0;
+                break;
+            case ALU_ADD:
+                s_ex_alu = s_ex_fwdA_out + s_ex_src2;
+                break;
+            default:
+                s_ex_alu = 0;
+                codasip_fatal(ALU_ERROR, "Default case EX_ALU: %d\n", r_ex_aluop);
                 break;
         }
 

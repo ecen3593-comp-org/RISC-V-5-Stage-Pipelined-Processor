@@ -83,7 +83,7 @@ event id : pipeline(pipe.ID)
         }
             
         // RFF2 control
-        if ((r_wb_rd == s_id_src1) && (r_wb_rd != 0) && (r_wb_regwrite))
+        if ((r_wb_rd == s_id_src2) && (r_wb_rd != 0) && (r_wb_regwrite))
         {
             s_id_rff2_sel = RF2_ID;
         }
@@ -140,8 +140,8 @@ event id_output : pipeline(pipe.ID)
         r_ex_pc         = r_id_pc;
         r_ex_instr      = s_id_instr;
         r_ex_rd         = s_id_rd;
-        // r_ex_reg1       = s_id_reg1; // No longer used
-        // r_ex_reg2       = s_id_reg2; // No Longer used
+        r_ex_reg1       = s_id_reg1;
+        r_ex_reg2       = s_id_reg2;
         r_ex_aluop      = s_id_aluop;
         r_ex_alusrc2    = s_id_alusrc2;
         r_ex_regwrite   = s_id_regwrite;
@@ -149,5 +149,7 @@ event id_output : pipeline(pipe.ID)
         r_ex_immed      = s_id_immed;
         r_ex_src1       = s_id_src1;    // New pipelined register (Phase 6)
         r_ex_src2       = s_id_src2;    // New pipelined register (Phase 6)
+        r_ex_rs1        = s_id_rs1;     // New pipelined register (Phase 6)
+        r_ex_rs2        = s_id_rs2;     // New pipelined register (Phase 6)
     };
 };
