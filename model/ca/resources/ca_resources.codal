@@ -56,16 +56,16 @@ signal bit[INSTR_W] s_id_instr;
 signal bit[ALUOP_W] s_id_aluop;
 
 // Control Signals
-signal bit[REGWRITE_W] s_id_regwrite;
-signal bit[SRC2_W] s_id_alusrc2;
-signal bit[HALT_W] s_id_halt;
+signal bit[REGWRITE_W]  s_id_regwrite;
+signal bit[SRC2_W]      s_id_alusrc2;
+signal bit[HALT_W]      s_id_halt;
 
 // Source Register Signals
 signal bit[RF_XPR_W] s_id_rs1;
 signal bit[RF_XPR_W] s_id_rs2;
 
 // Destination Register Signals
-signal bit[RF_XPR_W]s_id_rd;
+signal bit[RF_XPR_W] s_id_rd;
 
 // Register File Read Output Signals
 signal bit[WORD_W] s_id_reg1;
@@ -76,6 +76,12 @@ signal bit[WORD_W] s_id_immed;
 
 //Instruction opcode + func3 + func7
 signal bit[OPC_W] s_id_opc;
+
+// Register file select lines (Phase 6)
+signal bit[WORD_W] s_id_src1;
+signal bit[WORD_W] s_id_src2;
+signal bit[RFF1_W] s_id_rff1_sel;
+signal bit[RFF2_W] s_id_rff2_sel;
 
 // -------------------------------------------------------------------------------------------------
 // Execute stage
@@ -104,6 +110,22 @@ register bit[SRC2_W] r_ex_alusrc2               { pipeline = pipe.EX; };
 // Execute Stage Signals
 signal bit[WORD_W] s_ex_src2;
 signal bit[WORD_W] s_ex_alu;
+
+// Pipelined Register File Select Registers (Phase 6)
+register bit[WORD_W] r_ex_src1                  { pipeline = pipe.EX; };
+register bit[WORD_W] r_ex_src2                  { pipeline = pipe.EX; };
+
+// Forward Control Line Select Signals (Phase 6)
+signal bit[FWDA_W] s_ex_fwdA_sel;
+signal bit[FWDB_W] s_ex_fwdB_sel;
+
+// Forward Control Line Mux Output Signals (Phase 6)
+signal bit[WORD_W] s_ex_fwdA_out;
+signal bit[WORD_W] s_ex_fwdB_out;
+
+// Pipelined Registers for FWDCTRL
+register bit[WORD_W] r_ex_rs1                { pipeline = pipe.EX; };
+register bit[WORD_W] r_ex_rs2                { pipeline = pipe.EX; };
 
 // -------------------------------------------------------------------------------------------------
 // Memory stage

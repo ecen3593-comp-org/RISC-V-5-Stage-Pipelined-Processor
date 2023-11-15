@@ -43,7 +43,6 @@ event ex : pipeline(pipe.EX)
             codasip_info(INFO_GENERAL, "Halt Instructions Indicated");
         }
 
-
         // Multiplexor
         switch(r_ex_alusrc2)
         {
@@ -71,6 +70,71 @@ event ex : pipeline(pipe.EX)
             default:
                 s_ex_alu = 0;
                 codasip_fatal(ALU_ERROR, "Default case EX_ALU: %d\n", r_ex_aluop);
+                break;
+        }
+
+        // Forward Control Select1
+        if((r_ex_rs1 == r_me_rd) && (r_me_rd != 0) && (r_me_regwrite))
+        {
+            s_ex_fwdA_sel = FWDA_ALU_ME;
+        }
+        else if ((r_ex_rs1 == r_wb_rd) && (r_wb_rd != 0) && (r_wb_regwrite))
+        {
+            s_ex_fwdA_sel = FWDA_DATA_WB;
+        }
+        else 
+        {
+            s_ex_fwdA_sel = FWDA_SRC1;
+        }
+        
+        // Forward Control Select2
+        if ((r_ex_rs2 == r_me_rd) && (r_me_rd != 0) && (r_me_regwrite))
+        {
+            s_ex_fwdB_sel = FWDB_ALU_ME;
+        }
+        else if ((r_ex_rs2 == r_wb_rd) && (r_wb_rd != 0) && (r_wb_regwrite))
+        {
+            s_ex_fwdB_sel = FWDB_DATA_WB;
+        }
+        else 
+        {
+            s_ex_fwdB_sel = FWDB_SRC2;
+        }
+
+
+        // Forward Control Mux Output A
+        switch(s_ex_fwdA_sel)
+        {
+            case FWDA_SRC1:
+                s_ex_fwdA_out = r_ex_src1;
+                break;
+            case FWDA_ME:
+                s_ex_fwdA_out = r_me_alu;
+                break;
+            case FWDA_WB:
+                s_ex_fwdA_out = r_wb_alu;
+                break;
+            default:
+                s_ex_fwdA_out = 0;
+                // codasip_fatal(ALU_ERROR, "Default case EX_FWDA Multiplexor: %d\n", s_ex_fwdA_sel);
+                break;
+        }
+
+        // Forward Control Mux Output B
+        switch(s_ex_fwdB_sel)
+        {
+            case FWDB_SRC2:
+                s_ex_fwdB_out = r_ex_src2;
+                break;
+            case FWDB_ME:
+                s_ex_fwdB_out = r_me_alu;
+                break;
+            case FWDB_WB:
+                s_ex_fwdB_out = r_wb_alu;
+                break;
+            default:
+                s_ex_fwdB_out = 0;
+                // codasip_fatal(ALU_ERROR, "Default case EX_FWDB Multiplexor: %d\n", s_ex_fwdB_sel);
                 break;
         }
 

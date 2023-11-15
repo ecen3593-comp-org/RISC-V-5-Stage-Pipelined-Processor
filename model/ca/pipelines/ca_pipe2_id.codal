@@ -72,6 +72,56 @@ event id : pipeline(pipe.ID)
         // Set local stall.
         s_id_stall = 0;
 
+        // RFF1 control
+        if ((r_wb_rd == s_id_src1) && (r_wb_rd != 0) && (r_wb_regwrite))
+        {
+            s_id_rff1_sel = RF1_ID;
+        }
+        else
+        {
+            s_id_rff1_sel = ALU1_WB;
+        }
+            
+        // RFF2 control
+        if ((r_wb_rd == s_id_src1) && (r_wb_rd != 0) && (r_wb_regwrite))
+        {
+            s_id_rff2_sel = RF2_ID;
+        }
+        else
+        {
+            s_id_rff2_sel = ALU2_WB;
+        }
+    
+        switch (s_id_rff1_sel)
+        {
+            case RF1_ID:
+                s_id_src1 = r_wb_alu;
+                break;
+
+            case ALU1_WB:
+                s_id_src1 = s_id_reg1;
+                break;
+            default:
+                s_id_src1 = 0;
+                // codasip_fatal(SRC2_ERROR, "Default case S_ID_SRC1: %d\n", s_id_rff1_sel);
+                break;
+        }
+
+        switch (s_id_rff2_sel)
+        {
+            case RF2_ID:
+                s_id_src2 = r_wb_alu;
+                break;
+
+            case ALU2_WB:
+                s_id_src2 = s_id_reg2;
+                break;
+            default:
+                s_id_src2 = 0;
+                // codasip_fatal(SRC2_ERROR, "Default case S_ID_SRC2: %d\n", s_id_rff2_sel);
+                break;
+        }
+
         // Decoder activation
         dec(s_id_opc);
 
@@ -90,12 +140,14 @@ event id_output : pipeline(pipe.ID)
         r_ex_pc         = r_id_pc;
         r_ex_instr      = s_id_instr;
         r_ex_rd         = s_id_rd;
-        r_ex_reg1       = s_id_reg1;
-        r_ex_reg2       = s_id_reg2;
+        // r_ex_reg1       = s_id_reg1; // No longer used
+        // r_ex_reg2       = s_id_reg2; // No Longer used
         r_ex_aluop      = s_id_aluop;
         r_ex_alusrc2    = s_id_alusrc2;
         r_ex_regwrite   = s_id_regwrite;
         r_ex_halt       = s_id_halt;
         r_ex_immed      = s_id_immed;
+        r_ex_src1       = s_id_src1;    // New pipelined register (Phase 6)
+        r_ex_src2       = s_id_src2;    // New pipelined register (Phase 6)
     };
 };

@@ -34,10 +34,14 @@
 // Signal size
 // -------------------------------------------------------------------------------------------------
 
-#define ALUOP_W        bitsizeof(enum aluop)
-#define REGWRITE_W     bitsizeof(enum regwrite)
-#define SRC2_W         bitsizeof(enum src2)
-#define HALT_W         bitsizeof(enum halt)
+#define ALUOP_W         bitsizeof(enum aluop)
+#define REGWRITE_W      bitsizeof(enum regwrite)
+#define SRC2_W          bitsizeof(enum src2)
+#define HALT_W          bitsizeof(enum halt)
+#define RFF1_W          bitsizeof(enum rff1_sel)    // New signal size (Phase 6)
+#define RFF2_W          bitsizeof(enum rff2_sel)    // New signal size (Phase 6)
+#define FWDA_W         bitsizeof(enum fwdA_sel)     // New signal size (Phase 6)
+#define FWDB_W         bitsizeof(enum fwdb_sel)     // New signal size (Phase 6)
 // -------------------------------------------------------------------------------------------------
 // Enumerations
 // -------------------------------------------------------------------------------------------------
@@ -49,6 +53,21 @@
 // -------------------------------------------------------------------------------------------------
 // ID stage
 // -------------------------------------------------------------------------------------------------
+
+// Register File Select Lines (Phase 6)
+enum rff1_sel
+{
+    RF1_ID,
+    ALU1_WB
+};
+
+
+enum rff2_sel
+{
+    RF2_ID,
+    ALU2_WB
+};
+
 
 // -------------------------------------------------------------------------------------------------
 // EX stage
@@ -79,6 +98,21 @@ enum halt
     HALT_HALT,
 };
 
+
+enum fwdA_sel
+{
+    FWDA_SRC1,
+    FWDA_ALU_ME,
+    FWDA_DATA_WB,
+};
+
+
+enum fwdB_sel
+{
+    FWDB_SRC2,
+    FWDB_ALU_ME,
+    FWDB_DATA_WB,
+};
 
 // -------------------------------------------------------------------------------------------------
 // ME stage
