@@ -123,9 +123,9 @@ enum regwrite
 // Phase 7 ALU Source 1 multiplexor
 enum src1
 {
-    ALU_SRC1_REG,
     ALU_SRC1_ZERO,
-    ALU_SRC1_PC
+    ALU_SRC1_PC,
+    ALU_SRC1_REG
 };
 
 enum src2
@@ -159,8 +159,8 @@ enum fwdB_sel
 // Target address selection multiplexor (Phase 7)
 enum target_sel
 {
-    BRADD_ADDR, /* Target address = immed + PC (branch and jal instructions) */
     BRADD_ALU,  /* Target address = ALU output (jalr instruction) */
+    BRADD_ADDR  /* Target address = immed + PC (branch and jal instructions) */
 };
 
 // -------------------------------------------------------------------------------------------------

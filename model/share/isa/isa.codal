@@ -189,7 +189,7 @@ element i_rtype_alu           // define the instruction for the rtype arithmetic
                 result = src1 << src2;
                 break;
             case RTYPE_SLT:
-                if (((int32) src1) < ((int32) src2)) result = 1;
+                if (((int32) src1) < ((int32)src2)) result = 1;
                 else result = 0;
                 break;
             case RTYPE_SLTU:
@@ -200,10 +200,10 @@ element i_rtype_alu           // define the instruction for the rtype arithmetic
                 result = src1 ^ src2;
                 break;
             case RTYPE_SRL:
-                result = src1 >> (uint5) src2;
+                result = src1 >> (uint5)src2;
                 break;
             case RTYPE_SRA:
-                result = (int32) src1 >> (uint5) src2;
+                result = (int32)src1 >> (uint5)src2;
                 break;
             case RTYPE_OR:
                 result = src1 | src2;
