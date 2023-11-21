@@ -43,9 +43,9 @@
 #define RFF2_W          bitsizeof(enum rff2_sel)    // New signal size (Phase 6)
 #define FWDA_W          bitsizeof(enum fwdA_sel)    // New signal size (Phase 6)
 #define FWDB_W          bitsizeof(enum fwdB_sel)    // New signal size (Phase 6)
-#define IMMSEL_W       bitsizeof(enum immed_sel)    // New signal size (Phase 7)
+#define IMMSEL_W        bitsizeof(enum immed_sel)   // New signal size (Phase 7)
 #define BRANCH_W        bitsizeof(enum branchop)    // New signal size (Phase 7)
-#define TARGETADDR_W    bitsizeof(enum target_sel)  // New signal size (Phase 7)
+#define TARGETSEL_W     bitsizeof(enum target_sel)  // New signal size (Phase 7)
 #define WBSEL_W         bitsizeof(enum wb_sel)      // New signal size (Phase 7)
 // -------------------------------------------------------------------------------------------------
 // Enumerations
