@@ -50,7 +50,7 @@ event me : pipeline(pipe.ME)
                 break;
             default:
                 s_me_pcsrc = 0;
-                codasip_fatal(BRANCHOP_ERROR, "Default case EX_ALU: %d\n", r_me_brnchop);
+                codasip_fatal(BRANCHOP_ERROR, "Default case ME_BRNCHOP: %d\n", r_me_brnchop);
                 break;
         }
 

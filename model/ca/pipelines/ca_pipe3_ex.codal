@@ -123,7 +123,7 @@ event ex : pipeline(pipe.EX)
                 break;
             default:
                 s_ex_src1 = 0;
-                codasip_fatal(SRC1_ERROR, "Default case EX_Multiplexr: %d\n", r_ex_alusrc1);
+                codasip_fatal(SRC1_ERROR, "Default case EX_Multiplexr1: %d\n", r_ex_alusrc1);
                 break;
         }
 
@@ -138,7 +138,7 @@ event ex : pipeline(pipe.EX)
                 break;
             default:
                 s_ex_src2 = 0;
-                codasip_fatal(SRC2_ERROR, "Default case EX_Multiplexr: %d\n", r_ex_alusrc2);
+                codasip_fatal(SRC2_ERROR, "Default case EX_Multiplexr2: %d\n", r_ex_alusrc2);
                 break;
         }
 
@@ -198,7 +198,7 @@ event ex : pipeline(pipe.EX)
                 break;
             default:
                 s_ex_target_addr = 0;
-                codasip_fatal(TARGADRR_ERROR, "Default case EX_ALU: %d\n", r_ex_branchsel);
+                codasip_fatal(TARGADRR_ERROR, "Default case EX_BRANCHSEL: %d\n", r_ex_branchsel);
                 break;
         }
 
