@@ -76,6 +76,7 @@ enum rff2_sel
 // Immediate Selection (Phase 7)
 enum immed_sel
 {
+    IMM_NONE,
     IMM_ITYPE,
     IMM_BTYPE,
     IMM_JTYPE,
