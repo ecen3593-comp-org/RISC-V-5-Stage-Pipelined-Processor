@@ -36,12 +36,17 @@
 
 #define ALUOP_W         bitsizeof(enum aluop)
 #define REGWRITE_W      bitsizeof(enum regwrite)
+#define SRC1_W          bitsizeog(enum src1)        // New signal size (Phase 7)
 #define SRC2_W          bitsizeof(enum src2)
 #define HALT_W          bitsizeof(enum halt)
 #define RFF1_W          bitsizeof(enum rff1_sel)    // New signal size (Phase 6)
 #define RFF2_W          bitsizeof(enum rff2_sel)    // New signal size (Phase 6)
 #define FWDA_W          bitsizeof(enum fwdA_sel)    // New signal size (Phase 6)
 #define FWDB_W          bitsizeof(enum fwdB_sel)    // New signal size (Phase 6)
+#define IMMSEL_W       bitsizeof(enum immed_sel)    // New signal size (Phase 7)
+#define BRANCH_W        bitsizeof(enum branchop)    // New signal size (Phase 7)
+#define TARGETADDR_W    bitsizeof(enum target_sel)  // New signal size (Phase 7)
+#define WBSEL_W         bitsizeof(enum wb_sel)      // New signal size (Phase 7)
 // -------------------------------------------------------------------------------------------------
 // Enumerations
 // -------------------------------------------------------------------------------------------------
@@ -54,18 +59,37 @@
 // ID stage
 // -------------------------------------------------------------------------------------------------
 
-// Register File Select Lines (Phase 6)
+// Register File Select Line 1 (Phase 6)
 enum rff1_sel
 {
     RF1_ID,
     ALU1_WB
 };
 
-
+// Register File Select Line 2 (Phase 6)
 enum rff2_sel
 {
     RF2_ID,
     ALU2_WB
+};
+
+// Immediate Selection (Phase 7)
+enum immed_sel
+{
+    IMM_ITYPE,
+    IMM_BTYPE,
+    IMM_JTYPE,
+    IMM_UTYPE,
+    IMM_STYPE
+};
+
+// Branch operations (Phase 7)
+enum branchop
+{
+    BRANCH_FALSE,       /* Never branch (default) */
+    BRANCH_TRUE,        /* Always branch (jump) */
+    BRANCH_COND_FALSE,  /* Branch if ALU output != zero */
+    BRANCH_COND_TRUE    /* Branch if ALU output == 0 */
 };
 
 
@@ -78,12 +102,29 @@ enum aluop
 {
     ALU_NOP,
     ALU_ADD,
+    ALU_SUB,    /* Phase 7: ALU Function */
+    ALU_SLL,    /* Phase 7: ALU Function */
+    ALU_SLT,    /* Phase 7: ALU Function */
+    ALU_SLTU,   /* Phase 7: ALU Function */
+    ALU_XOR,    /* Phase 7: ALU Function */
+    ALU_SRL,    /* Phase 7: ALU Function */
+    ALU_SRA,    /* Phase 7: ALU Function */
+    ALU_OR,     /* Phase 7: ALU Function */
+    ALU_AND     /* Phase 7: ALU Function */
 };
 
 enum regwrite
 {
     WE_FALSE,
     WE_TRUE,
+};
+
+// Phase 7 ALU Source 1 multiplexor
+enum src1
+{
+    ALU_SRC1_REG,
+    ALU_SRC1_ZERO,
+    ALU_SRC1_PC
 };
 
 enum src2
@@ -98,7 +139,7 @@ enum halt
     HALT_HALT,
 };
 
-
+// Forward Selection Line A (Phase 6)
 enum fwdA_sel
 {
     FWDA_SRC1,
@@ -106,12 +147,19 @@ enum fwdA_sel
     FWDA_DATA_WB,
 };
 
-
+// Forward Selection Line B (Phase 6)
 enum fwdB_sel
 {
     FWDB_SRC2,
     FWDB_ALU_ME,
     FWDB_DATA_WB,
+};
+
+// Target address selection multiplexor (Phase 7)
+enum target_sel
+{
+    BRADD_ADDR, /* Target address = immed + PC (branch and jal instructions) */
+    BRADD_ALU,  /* Target address = ALU output (jalr instruction) */
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -121,6 +169,14 @@ enum fwdB_sel
 // -------------------------------------------------------------------------------------------------
 // WB stage
 // -------------------------------------------------------------------------------------------------
+
+// WB stage multiplexor (Phase 7)
+enum wb_sel
+{
+    RFWT_ALU,   /* Write ALU output to regfile */
+    RFWT_PC,    /* Write PC + 4 to regfile (jal and jalr instructions)*/
+    RFWT_MEM    /* Write value read from memory to regfile (load instructions) */
+};
 
 // -------------------------------------------------------------------------------------------------
 // Auxiliary definitions

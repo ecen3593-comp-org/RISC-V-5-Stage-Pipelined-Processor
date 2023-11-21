@@ -35,8 +35,13 @@
 // -------------------------------------------------------------------------------------------------
 
 set dec = i_hw_halt,
-          i_hw_alu,
-          i_hw_alu_i;
+        i_hw_rtype_alu,
+        i_hw_itype_alu,
+        i_hw_alu_special,
+        i_hw_btype_branches,
+        i_hw_utype_ops,
+        i_hw_itype_jlreg,
+        i_hw_itype_jlink;
 
 // -------------------------------------------------------------------------------------------------
 // Halt instruction
@@ -53,17 +58,15 @@ element i_hw_halt
 
     semantics
     {
-        // Register file write enable
-        s_id_regwrite = WE_FALSE;
-
-        // Operations
-        s_id_aluop = ALU_NOP;
-
-        // Operand MUXes
-        s_id_alusrc2 = DONT_CARE;
-
-        // HALT Command
-        s_id_halt = HALT_HALT;
+        s_id_regwrite   = WE_FALSE;     // Register file write enable
+        s_id_aluop      = ALU_NOP;      // ALU operation
+        s_id_alusrc1    = DONT_CARE;    // ALU source 1 (Phase 7)
+        s_id_alusrc2    = DONT_CARE;    // ALU source 2
+        s_id_halt       = HALT_HALT;    // HALT Command
+        s_id_immsel     = DONT_CARE;    // Immediate selection (Phase 7)
+        s_id_branchop   = BRANCH_FALSE; // Branch operation (Phase 7)
+        s_id_brnch_sel  = DONT_CARE;    // Branch selection (Phase 7)
+        s_id_rfwt_sel   = DONT_CARE;    // Register file write selection (Phase 7)
     };
 };
 
@@ -71,7 +74,7 @@ element i_hw_halt
 // Arithmetic instructions
 // -------------------------------------------------------------------------------------------------
 
-element i_hw_alu
+element i_hw_rtype_alu
 {
     use opc_rtype_alu as opc;
 
@@ -79,31 +82,57 @@ element i_hw_alu
     binary { opc };
 
     semantics
-    {
-        // Register file write enable
-        s_id_regwrite = WE_TRUE;
-
-        switch (opc)
+    {      
+        switch(opc)
         {
             case RTYPE_ADD:
                 s_id_aluop = ALU_ADD;
                 break;
-
+            // Added instruction cases (Phase 7)
+            case RTYPE_SUB:
+                s_id_aluop = ALU_SUB;
+                break;
+            case RTYPE_SLL:
+                s_id_aluop = ALU_SLL;
+                break;
+            case RTYPE_SLT:
+                s_id_aluop = ALU_SLT;
+                break;
+            case RTYPE_SLTU:
+                s_id_aluop = ALU_SLTU;
+                break;
+            case RTYPE_XOR:
+                s_id_aluop = ALU_XOR;
+                break;
+            case RTYPE_SRL:
+                s_id_aluop = ALU_SRL;
+                break;
+            case RTYPE_SRA:
+                s_id_aluop = ALU_SRA;
+                break;
+            case RTYPE_OR:
+                s_id_aluop = ALU_OR;
+                break;
+            case RTYPE_AND:
+                s_id_aluop = ALU_AND;
+                break;
             default:
-                codasip_fatal(ALU_ERROR, "Default case: %d\n", opc);
+                codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
                 break;
         }
 
-        // Operand MUXes
-        s_id_alusrc2 = ALU2_REG;
-
-        // HALT Command
-        s_id_halt = HALT_NOHALT;
+        s_id_regwrite   = WE_TRUE;          // Enable register file write
+        s_id_alusrc1    = ALU_SRC1_REG;     // ALU source 1 operand (Phase 7)
+        s_id_alusrc2    = ALU2_REG;         // ALU source 1 operand
+        s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
+        s_id_immsel     = IMM_NONE;         // No immediate value needed (Phase 7)
+        s_id_brnchop    = BRANCH_FALSE;     // These opcodes don't branch (Phase 7)
+        s_id_brancsel   = DONT_CARE;        // These opcodes don't branch (Phase 7)
+        s_id_rfwt_sel   = RFWT_ALU;         // Register file write selection (Phase 7)
     };
 };
 
-
-element i_hw_alu_i
+element i_hw_itype_alu
 {
     use opc_itype_alu as opc;
 
@@ -112,24 +141,222 @@ element i_hw_alu_i
 
     semantics
     {
-        // Register file write enable
-        s_id_regwrite = WE_TRUE;
-
-        switch (opc)
+        switch(opc)
         {
             case ITYPE_ADDI:
                 s_id_aluop = ALU_ADD;
                 break;
-
+            // Added instruction cases (Phase 7)
+            case ITYPE_SLTI:
+                s_id_aluop = ALU_SLT;
+                break;
+            case ITYPE_SLTIU:
+                s_id_aluop = ALU_SLTU;
+                break;
+            case ITYPE_XORI:
+                s_id_aluop = ALU_XOR;
+                break;
+            case ITYPE_ORI:
+                s_id_aluop = ALU_OR;
+                break;
+            case ITYPE_ANDI:
+                s_id_aluop = ALU_AND;
+                break;
             default:
-                codasip_fatal(ALU_ERROR, "Default case: %d\n", opc);
+                codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
                 break;
         }
 
-        // Operand MUXes
-        s_id_alusrc2 = ALU2_IMM;
+        s_id_regwrite   = WE_TRUE;          // Enable register file write
+        s_id_alusrc1    = ALU_SRC1_REG;     // ALU source 1 operand (Phase 7)
+        s_id_alusrc2    = ALU2_IMM;         // ALU source 1 operand
+        s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
+        s_id_immsel     = IMM_ITYPE;        // I-type bits (Phase 7)
+        s_id_brnchop    = BRANCH_FALSE;     // These opcodes don't branch (Phase 7)
+        s_id_brancsel   = DONT_CARE;        // These opcodes don't branch (Phase 7)
+        s_id_rfwt_sel   = RFWT_ALU;         // Register file write selection (Phase 7)
+    };
+};
 
-        // HALT Command
-        s_id_halt = HALT_NOHALT;
+// I-type special: srai, srli, slli (Phase 7)
+element i_hw_alu_special
+{
+    use opc_itype_special as opc;
+
+    assembly { opc };
+    binary { opc };
+
+    semantics
+    {
+        switch(opc)
+        {
+            case ITYPE_SRAI:
+                s_id_aluop = ALU_SRA;
+                break;
+            case ITYPE_SRLI:
+                s_id_aluop = ALU_SRL;
+                break;
+            case ITYPE_SLLI:
+                s_id_aluop = ALU_SLL;
+                break;
+            default:
+                codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
+                break;
+        }
+
+        s_id_regwrite   = WE_TRUE;          // Enable register file write
+        s_id_alusrc1    = ALU_SRC1_REG;     // ALU source 1 operand
+        s_id_alusrc2    = ALU2_IMM;         // ALU source 1 operand
+        s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
+        s_id_immsel     = IMM_ITYPE;        // I-type bits
+        s_id_brnchop    = BRANCH_FALSE;     // These opcodes don't branch
+        s_id_brancsel   = DONT_CARE;        // These opcodes don't branch
+        s_id_rfwt_sel   = RFWT_ALU;         // Register file write selection
+    };
+};
+
+// B-type Branch: beq, bne, blt, bge, bltu, bgeu (Phase 7)
+element i_hw_btype_branches
+{
+    use opc_btype_branches as opc;
+
+    assembly { opc };
+    binary { opc };
+
+    semantics
+    {
+        switch(opc)
+        {
+            case BTYPE_BEQ:
+                s_id_aluop = ALU_SUB;
+                s_id_brnchop = BRANCH_COND_TRUE;
+                break;
+            case BTYPE_BNE:
+                s_id_aluop = ALU_SUB;
+                s_id_brnchop = BRANCH_COND_FALSE;
+                break;
+            case BTYPE_BLT:
+                s_id_aluop = ALU_SLT;
+                s_id_brnchop = BRANCH_FALSE;
+                break;
+            case BTYPE_BGE:
+                s_id_aluop = ALU_SLT;
+                s_id_brnchop = BRANCH_TRUE;
+                break;
+            case BTYPE_BLTU:
+                s_id_aluop = ALU_SLTU;
+                s_id_brnchop = BRANCH_FALSE;
+                break;
+            case BTYPE_BGEU:
+                s_id_aluop = ALU_SLTU;
+                s_id_brnchop = BRANCH_TRUE;
+                break;
+            default:
+                codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
+                break;
+        }
+
+        s_id_regwrite   = WE_FALSE;         // Disable register file write
+        s_id_alusrc1    = ALU_SRC1_REG;     // ALU source 1 operand
+        s_id_alusrc2    = ALU2_REG;         // ALU source 1 operand
+        s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
+        s_id_immsel     = IMM_BTYPE;        // No immediate value needed
+        s_id_brancsel   = BRADD_ADDR;       // These opcodes don't branch
+        s_id_rfwt_sel   = DONT_CARE;        // Register file write selection
+    };
+};
+
+// U-type Branch: lui, auipc (Phase 7)
+element i_hw_utype_ops
+{
+    use opc_utype_ops as opc;
+
+    assembly { opc };
+    binary { opc };
+
+    semantics
+    {
+        switch(opc)
+        {
+            case UTYPE_LUI:
+                s_id_alusrc1 = ALU_SRC1_ZERO;
+                break;
+            case UTYPE_AUIPC:
+                s_id_aluop = ALU_SRC1_PC;
+                break;
+            default:
+                codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
+                break;
+        }
+
+        s_id_aluop      = ALU_ADD;          // All opcodes use add opcode
+        s_id_regwrite   = WE_TRUE;          // Enable register file write
+        s_id_alusrc2    = ALU2_IMM;         // ALU source 1 operand
+        s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
+        s_id_immsel     = IMM_UTYPE;        // U-type bits (Phase 7)
+        s_id_brnchop    = BRANCH_FALSE;     // These opcodes don't branch (Phase 7)
+        s_id_brancsel   = DONT_CARE;        // These opcodes don't branch (Phase 7)
+        s_id_rfwt_sel   = RFWT_ALU;         // Register file write selection (Phase 7)
+    };
+};
+
+
+// R-type jump and link register opcode: jalr (Phase 7)
+element i_hw_itype_jlreg
+{
+    use opc_itype_jlreg as opc;
+
+    assembly { opc };
+    binary { opc };
+
+    semantics
+    {
+        if(opc == ITYPE_JALR)
+        {
+            s_id_aluop      = ALU_ADD;          // Use the add operation
+            s_id_regwrite   = WE_TRUE;          // Enable register file write
+            s_id_alusrc1    = ALU_SRC1_REG;     // ALU source 1 operand
+            s_id_alusrc2    = ALU2_IMM;         // ALU source 1 operand
+            s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
+            s_id_immsel     = IMM_ITYPE;        // I-type bits
+            s_id_brnchop    = BRANCH_TRUE;      // Enable branching
+            s_id_brancsel   = BRADD_ALU;        // ALU branch selection line
+            s_id_rfwt_sel   = RFWT_PC;          // Register file write selection
+        }
+        else
+        {
+            codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
+        }
+    };
+};
+
+// J-type Jump and Link opcode: jal (Phase 7)
+element i_hw_itype_jlink
+{
+    use opc_jtype_jlink as opc;
+
+    assembly { opc };
+    binary { opc };
+
+    semantics
+    {
+        if(opc == JTYPE_JAL)
+        {
+            s_id_aluop      = DONT_CARE;        // Doesn't use the ALU
+            s_id_regwrite   = WE_TRUE;          // Enable register file write
+            s_id_alusrc1    = DONT_CARE;        // ALU source 1 operand
+            s_id_alusrc2    = DONT_CARE;        // ALU source 1 operand
+            s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
+            s_id_immsel     = IMM_JTYPE;        // J-type bits
+            s_id_brnchop    = BRANCH_TRUE;      // Enable branching
+            s_id_brancsel   = BRADD_ADDR;       // ALU branch selection line
+            s_id_rfwt_sel   = RFWT_PC;          // Register file write selection
+        }    
+        else
+        {
+            codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
+        }
+
+        
     };
 };
