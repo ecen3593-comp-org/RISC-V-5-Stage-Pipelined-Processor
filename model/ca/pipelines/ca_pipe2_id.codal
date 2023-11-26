@@ -75,30 +75,30 @@ event id : pipeline(pipe.ID)
         // RFF1 control
         if ((r_wb_rd == s_id_src1) && (r_wb_rd != 0) && (r_wb_regwrite))
         {
-            s_id_rff1_sel = RF1_ID;
+            s_id_rff1_sel = RF1_SRC_ID;
         }
         else
         {
-            s_id_rff1_sel = ALU1_WB;
+            s_id_rff1_sel = DATA1_WB;
         }
             
         // RFF2 control
         if ((r_wb_rd == s_id_src2) && (r_wb_rd != 0) && (r_wb_regwrite))
         {
-            s_id_rff2_sel = RF2_ID;
+            s_id_rff2_sel = RF2_SRC_ID;
         }
         else
         {
-            s_id_rff2_sel = ALU2_WB;
+            s_id_rff2_sel = DATA2_WB;
         }
     
         switch (s_id_rff1_sel)
         {
-            case RF1_ID:
+            case RF1_SRC_ID:
                 s_id_src1 = r_wb_alu;
                 break;
 
-            case ALU1_WB:
+            case DATA1_WB:
                 s_id_src1 = s_id_reg1;
                 break;
             default:
@@ -109,11 +109,11 @@ event id : pipeline(pipe.ID)
 
         switch (s_id_rff2_sel)
         {
-            case RF2_ID:
+            case RF2_SRC_ID:
                 s_id_src2 = r_wb_alu;
                 break;
 
-            case ALU2_WB:
+            case DATA2_WB:
                 s_id_src2 = s_id_reg2;
                 break;
             default:

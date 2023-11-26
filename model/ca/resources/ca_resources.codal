@@ -78,8 +78,8 @@ signal bit[WORD_W] s_id_immed;
 signal bit[OPC_W] s_id_opc;
 
 // Register file select lines (Phase 6)
-signal bit[WORD_W] s_id_src1;
-signal bit[WORD_W] s_id_src2;
+signal bit[RF_XPR_W] s_id_src1;
+signal bit[RF_XPR_W] s_id_src2;
 signal bit[RFF1_W] s_id_rff1_sel;
 signal bit[RFF2_W] s_id_rff2_sel;
 
