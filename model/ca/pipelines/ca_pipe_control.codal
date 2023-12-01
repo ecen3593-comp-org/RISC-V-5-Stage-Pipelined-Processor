@@ -85,5 +85,12 @@ event pipeline_control : pipeline(pipe.IF)
             pipe.WB.clear();
             codasip_info(INFO_PIPE, "pipeline WB clear\n");
         }
+
+        // Flush the pipeline when a branch is taken (Phase 7)
+        if(s_me_pcsrc)
+        {
+            pipe.ID.clear();
+            pipe.ME.clear();
+        }
     };
 };
