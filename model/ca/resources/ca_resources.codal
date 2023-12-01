@@ -80,11 +80,11 @@ signal bit[REGWRITE_W]  s_id_rfwt_sel;      // Register file write select signal
 signal bit[BRANCH_W]    s_id_brancsel;      // Branch select seignal (Phase 7)
 signal bit[IMMSEL_W]    s_id_immsel;        // Immediate select signal (Phase 7)
 /* Immediate generator control signals */
-signal bit[IMMSEL_W]    s_id_immedi;        // Changed s_id_immed to s_id_immedi (Phase 7)
-signal bit[IMMSEL_W]    s_id_immedb;        // New IMMGEN control signal (Phase 7)
-signal bit[IMMSEL_W]    s_id_immedu;        // New IMMGEN control signal (Phase 7)
-signal bit[IMMSEL_W]    s_id_immedj;        // New IMMGEN control signal (Phase 7)
-signal bit[IMMSEL_W]    s_id_immeds;        // New IMMGEN control signal (Phase 7)
+signal bit[WORD_W]      s_id_immedi;        // Changed s_id_immed to s_id_immedi (Phase 7)
+signal bit[WORD_W]      s_id_immedb;        // New IMMGEN control signal (Phase 7)
+signal bit[WORD_W]      s_id_immedu;        // New IMMGEN control signal (Phase 7)
+signal bit[WORD_W]      s_id_immedj;        // New IMMGEN control signal (Phase 7)
+signal bit[WORD_W]      s_id_immeds;        // New IMMGEN control signal (Phase 7)
 
 // -------------------------------------------------------------------------------------------------
 // Execute stage

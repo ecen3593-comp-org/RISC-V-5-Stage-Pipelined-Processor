@@ -43,14 +43,14 @@ event me : pipeline(pipe.ME)
                 s_me_pcsrc = r_me_zero;
                 break;
             case BRANCH_COND_FALSE:
-                s_me_pcsrc = r_me_zero;
+                s_me_pcsrc = !r_me_zero;
                 break;
             case BRANCH_TRUE:
-                s_me_pcsrc = 1; // ???
+                s_me_pcsrc = 1;
                 break;
             default:
                 s_me_pcsrc = 0;
-                codasip_fatal(BRANCHOP_ERROR, "Default case ME_BRNCHOP: %d\n", r_me_brnchop);
+                // codasip_fatal(BRANCHOP_ERROR, "Default case ME_BRNCHOP: %d\n", r_me_brnchop);
                 break;
         }
 
