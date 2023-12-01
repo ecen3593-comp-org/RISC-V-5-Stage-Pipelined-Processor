@@ -62,8 +62,8 @@ signal bit[RF_XPR_W]    s_id_rd;            // Destination register singal
 signal bit[WORD_W]      s_id_reg1;          // Not used as of Phase 6
 signal bit[WORD_W]      s_id_reg2;          // Not used as of Phase 6
 /* Register file mux outputs (Phase 7) */
-signal bit[WORD_W]      s_id_src1;          // Register file mux output source 1
-signal bit[WORD_W]      s_id_src2;          // Register file mux output source 2
+signal bit[RF_XPR_W]    s_id_src1;          // Register file mux output source 1
+signal bit[RF_XPR_W]    s_id_src2;          // Register file mux output source 2
 /* Register file select lines (Phase 6) */
 signal bit[RFF1_W]      s_id_rff1_sel;      // Register file select line 1 signal
 signal bit[RFF2_W]      s_id_rff2_sel;      // Register file select line 2 signal

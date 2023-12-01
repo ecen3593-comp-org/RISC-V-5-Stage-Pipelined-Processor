@@ -85,7 +85,7 @@ event ex : pipeline(pipe.EX)
                 s_ex_fwdA_out = s_wb_alu;
                 break;
             default:
-                s_ex_fwdA_out = 0;
+                // s_ex_fwdA_out = 0;
                 // codasip_fatal(ALU_ERROR, "Default case EX_FWDA Multiplexor: %d\n", s_ex_fwdA_sel);
                 break;
         }
@@ -103,7 +103,7 @@ event ex : pipeline(pipe.EX)
                 s_ex_fwdB_out = s_wb_alu;
                 break;
             default:
-                s_ex_fwdB_out = 0;
+                // s_ex_fwdB_out = 0;
                 // codasip_fatal(ALU_ERROR, "Default case EX_FWDB Multiplexor: %d\n", s_ex_fwdB_sel);
                 break;
         }
@@ -182,7 +182,7 @@ event ex : pipeline(pipe.EX)
                 s_ex_alu = s_ex_src1 & s_ex_src2;
                 break;
             default:
-                s_ex_alu = 0;
+                // s_ex_alu = 0;
                 codasip_fatal(ALU_ERROR, "Default case EX_ALU: %d\n", r_ex_aluop);
                 break;
         }

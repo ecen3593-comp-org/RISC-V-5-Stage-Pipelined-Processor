@@ -62,15 +62,15 @@
 // Register File Select Line 1 (Phase 6)
 enum rff1_sel
 {
-    RF1_ID,
-    ALU1_WB
+    RF1_SRC_ID,
+    DATA1_WB
 };
 
 // Register File Select Line 2 (Phase 6)
 enum rff2_sel
 {
-    RF2_ID,
-    ALU2_WB
+    RF2_SRC_ID,
+    DATA2_WB
 };
 
 // Immediate Selection (Phase 7)
