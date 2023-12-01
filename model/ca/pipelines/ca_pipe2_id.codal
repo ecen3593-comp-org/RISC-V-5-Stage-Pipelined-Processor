@@ -99,7 +99,7 @@ event id : pipeline(pipe.ID)
         switch (s_id_rff1_sel)
         {
             case RF1_ID:
-                s_id_src1 = r_wb_alu;
+                s_id_src1 = s_wb_alu;
                 break;
 
             case ALU1_WB:
@@ -114,7 +114,7 @@ event id : pipeline(pipe.ID)
         switch (s_id_rff2_sel)
         {
             case RF2_ID:
-                s_id_src2 = r_wb_alu;
+                s_id_src2 = s_wb_alu;
                 break;
 
             case ALU2_WB:
