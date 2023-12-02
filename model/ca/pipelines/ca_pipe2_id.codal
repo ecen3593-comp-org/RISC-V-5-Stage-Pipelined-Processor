@@ -66,7 +66,7 @@ event id : pipeline(pipe.ID)
         s_id_immedu = (int32)(int12)s_id_instr [31..12]; // U-type immediate
         s_id_immedb = ((int32)(int12)(s_id_instr [31..31] :: s_id_instr [7..7] :: s_id_instr [30..25] :: s_id_instr [11..8])) << 1; // B-type immediate
         s_id_immeds = ((int32)(int12)(s_id_instr [31..25] :: s_id_instr [11..4]));  // S-type immediate
-        s_id_immedj = ((int32)(int12)(s_id_instr [31..31] :: s_id_instr [19..12] :: s_id_instr [20..20] :: s_id_instr [19..10]))    // J_Type immediate
+        s_id_immedj = ((int32)(int12)(s_id_instr [31..31] :: s_id_instr [19..12] :: s_id_instr [20..20] :: s_id_instr [19..10]));   // J_Type immediate
 
         // Read input register(s) from the Register File (rf_xpr)
         // NOTE: The register file is essentially an array of 32x 32-bit registers
@@ -99,7 +99,7 @@ event id : pipeline(pipe.ID)
         switch (s_id_rff1_sel)
         {
             case RF1_SRC_ID:
-                s_id_src1 = s_wb_alu;
+                s_id_src1 = s_wb_result;
                 break;
 
             case DATA1_WB:
@@ -114,7 +114,7 @@ event id : pipeline(pipe.ID)
         switch (s_id_rff2_sel)
         {
             case RF2_SRC_ID:
-                s_id_src2 = s_wb_alu;
+                s_id_src2 = s_wb_result;
                 break;
 
             case DATA2_WB:
@@ -129,26 +129,26 @@ event id : pipeline(pipe.ID)
         // Decoder activation
         dec(s_id_opc);
 
-        // IMMGET control generation
+        // IMMGEN control generation
         switch(s_id_immsel)
         {
             case IMM_ITYPE:
-                s_id_immed = s_id_immedi;
+                s_id_immed_out = s_id_immedi;
                 break;
             case IMM_BTYPE:
-                s_id_immed = s_id_immedb;
+                s_id_immed_out = s_id_immedb;
                 break;
             case IMM_JTYPE:
-                s_id_immed = s_id_immedj;
+                s_id_immed_out = s_id_immedj;
                 break;
             case IMM_UTYPE:
-                s_id_immed = s_id_immedu;
+                s_id_immed_out = s_id_immedu;
                 break;
             case IMM_STYPE:
-                s_id_immed = s_id_immeds;
+                s_id_immed_out = s_id_immeds;
                 break;
             default:
-                s_id_immed = IMM_NONE;
+                s_id_immed_out = IMM_NONE;
                 codasip_fatal(IMM_ERROR, "Default case S_ID_IMMSEL: %d\n", s_id_immsel);
                 break;
         }
@@ -175,13 +175,13 @@ event id_output : pipeline(pipe.ID)
         r_ex_alusrc2    = s_id_alusrc2;
         r_ex_regwrite   = s_id_regwrite;
         r_ex_halt       = s_id_halt;
-        r_ex_immed      = s_id_immed;
+        r_ex_immed      = s_id_immed_out;
         r_ex_src1       = s_id_src1;        // New pipelined register (Phase 6)
         r_ex_src2       = s_id_src2;        // New pipelined register (Phase 6)
         r_ex_rs1        = s_id_rs1;         // New pipelined register (Phase 6)
         r_ex_rs2        = s_id_rs2;         // New pipelined register (Phase 6)
         r_ex_brnchop    = s_id_branchop;    // New pipelined register (Phase 7)
         r_ex_rfwt_sel   = s_id_rfwt_sel;    // New pipelined register (Phase 7)
-        r_ex_branchsel  = s_id_brancsel;    // New pipelined register (Phase 7)
+        r_ex_branchsel  = s_id_branch_sel;    // New pipelined register (Phase 7)
     };
 };

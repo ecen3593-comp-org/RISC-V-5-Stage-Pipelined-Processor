@@ -36,7 +36,7 @@
 
 #define ALUOP_W         bitsizeof(enum aluop)
 #define REGWRITE_W      bitsizeof(enum regwrite)
-#define SRC1_W          bitsizeog(enum src1)        // New signal size (Phase 7)
+#define SRC1_W          bitsizeof(enum src1)        // New signal size (Phase 7)
 #define SRC2_W          bitsizeof(enum src2)
 #define HALT_W          bitsizeof(enum halt)
 #define RFF1_W          bitsizeof(enum rff1_sel)    // New signal size (Phase 6)

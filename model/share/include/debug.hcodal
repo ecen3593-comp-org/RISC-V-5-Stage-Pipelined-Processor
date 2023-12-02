@@ -48,6 +48,7 @@ enum info_levels
     TARGADRR_ERROR  = 16,
     BRANCHOP_ERROR  = 17,
     RFWT_ERROR      = 18,
+    DECODER_ERROR   = 19,
     INFO_LEVEL      = 22,
     TRACE_LEVEL     = 23,
     WARNING_LEVEL   = 24,

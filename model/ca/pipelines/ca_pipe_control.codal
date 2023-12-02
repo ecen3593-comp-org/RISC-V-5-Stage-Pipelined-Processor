@@ -87,10 +87,10 @@ event pipeline_control : pipeline(pipe.IF)
         }
 
         // Flush the pipeline when a branch is taken (Phase 7)
-        if(s_me_pcsrc)
-        {
-            pipe.ID.clear();
-            pipe.ME.clear();
-        }
+        // if(s_me_pcsrc)
+        // {
+        //     pipe.ID.clear();
+        //     pipe.EX.clear();
+        // }
     };
 };
