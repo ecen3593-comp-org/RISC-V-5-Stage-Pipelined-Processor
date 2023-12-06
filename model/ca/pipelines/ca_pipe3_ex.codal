@@ -202,7 +202,6 @@ event ex : pipeline(pipe.EX)
                 break;
         }
 
-
         // ALU zero signal generation (Phase 7)
         if(s_ex_alu == 0){ s_ex_zero = 1; }
         else{ s_ex_zero = 0; }

@@ -185,6 +185,6 @@ event id_output : pipeline(pipe.ID)
         r_ex_rs2        = s_id_rs2;         // New pipelined register (Phase 6)
         r_ex_brnchop    = s_id_branchop;    // New pipelined register (Phase 7)
         r_ex_rfwt_sel   = s_id_rfwt_sel;    // New pipelined register (Phase 7)
-        r_ex_branchsel  = s_id_branch_sel;    // New pipelined register (Phase 7)
+        r_ex_branchsel  = s_id_branch_sel;  // New pipelined register (Phase 7)
     };
 };
