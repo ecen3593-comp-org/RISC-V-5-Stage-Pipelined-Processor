@@ -146,55 +146,57 @@ event ex : pipeline(pipe.EX)
         switch(r_ex_aluop)
         {
             case ALU_NOP:
-                s_ex_alu = 0;
+                s_ex_aluout = 0;
                 break;
             case ALU_ADD:
-                s_ex_alu = s_ex_alusrc1 + s_ex_alusrc2;
+                s_ex_aluout = s_ex_alusrc1 + s_ex_alusrc2;
                 break;
             // Added OPCODES (Phase 7)
             case ALU_SUB:
-                s_ex_alu = s_ex_alusrc1 - s_ex_alusrc2;
+                s_ex_aluout = s_ex_alusrc1 - s_ex_alusrc2;
                 break;
             case ALU_SLL:
-                s_ex_alu = s_ex_alusrc1 << (int5)s_ex_alusrc2;
+                s_ex_aluout = s_ex_alusrc1 << (int5)s_ex_alusrc2;
                 break;
             case ALU_SLT:
-                if ((int32)s_ex_alusrc1 < (int32)s_ex_alusrc2){ s_ex_alu = 1; }
+                if ((int32)s_ex_alusrc1 < (int32)s_ex_alusrc2){ s_ex_aluout = 1; }
                 else { s_ex_aluout = 0; }
                 break;
             case ALU_SLTU:
-                if (s_ex_alusrc1 < s_ex_alusrc2){ s_ex_alu = 1; }
+                if (s_ex_alusrc1 < s_ex_alusrc2){ s_ex_aluout = 1; }
                 else { s_ex_aluout = 0; }
                 break;
             case ALU_XOR:
-                s_ex_alu = s_ex_alusrc1 ^ s_ex_alusrc2;
+                s_ex_aluout = s_ex_alusrc1 ^ s_ex_alusrc2;
                 break;
             case ALU_SRL:
-                s_ex_alu = s_ex_alusrc1 >> (int5)s_ex_alusrc2;
+                s_ex_aluout = s_ex_alusrc1 >> (int5)s_ex_alusrc2;
                 break;
             case ALU_SRA:
-                s_ex_alu = (int32)s_ex_alusrc1 >> (int5)s_ex_alusrc2;
+                s_ex_aluout = (int32)s_ex_alusrc1 >> (int5)s_ex_alusrc2;
                 break;
             case ALU_OR:
-                s_ex_alu = s_ex_alusrc1 | s_ex_alusrc2;
+                s_ex_aluout = s_ex_alusrc1 | s_ex_alusrc2;
                 break;
             case ALU_AND:
-                s_ex_alu = s_ex_alusrc1 & s_ex_alusrc2;
+                s_ex_aluout = s_ex_alusrc1 & s_ex_alusrc2;
                 break;
             default:
-                // s_ex_alu = 0;
+                // s_ex_aluout = 0;
                 codasip_fatal(ALU_ERROR, "Default case EX_ALU: %d\n", r_ex_aluop);
                 break;
         }
+
+        s_ex_brimm = r_ex_pc + r_ex_immed;
 
         // Branch Selector multiplexor (Phase 7)
         switch(r_ex_branchsel)
         {
             case BRADD_ALU:
-                s_ex_target_addr = s_ex_alu;
+                s_ex_target_addr = s_ex_aluout;
                 break;
             case BRADD_ADDR:
-                s_ex_target_addr = r_ex_pc + r_ex_immed;
+                s_ex_target_addr = s_ex_brimm;
                 break;
             default:
                 s_ex_target_addr = 0;
@@ -203,7 +205,7 @@ event ex : pipeline(pipe.EX)
         }
 
         // ALU zero signal generation (Phase 7)
-        if(s_ex_alu == 0){ s_ex_zero = 1; }
+        if(s_ex_aluout == 0){ s_ex_zero = 1; }
         else{ s_ex_zero = 0; }
 
         // Timing
@@ -219,7 +221,7 @@ event ex_output : pipeline(pipe.EX)
         r_me_instr          = r_ex_instr;
         r_me_rd             = r_ex_rd;
         r_me_regwrite       = r_ex_regwrite;
-        r_me_alu            = s_ex_alu;
+        r_me_alu            = s_ex_aluout;
         r_me_brnchop        = r_ex_brnchop;     // New pipeline register (Phase 7)
         r_me_zero           = s_ex_zero;        // New pipeline register (Phase 7)
         r_me_target_addr    = s_ex_target_addr; // New pipeline register (Phase 7)

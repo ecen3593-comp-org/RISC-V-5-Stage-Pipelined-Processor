@@ -114,7 +114,6 @@ register bit[BRANCH_W]      r_ex_branchsel      { pipeline = pipe.EX; };    // P
 register bit[WORD_W]        r_ex_immed          { pipeline = pipe.EX; };    // Pipelined immediate Register
 
 /* Execute Stage Signals */
-signal bit[WORD_W]          s_ex_alu;           // ALU output signal (Phase 7)
 signal bit[BRANCH_W]        s_ex_brimm;         // Immediate + PC adder output (Phase 7)
 signal bit[ALUOP_W]         s_ex_alusrc1;       // ALU source 1 input signal (Phase 7)
 signal bit[ALUOP_W]         s_ex_alusrc2;       // ALU source 2 input signal (Phase 7)
