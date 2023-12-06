@@ -41,7 +41,7 @@ event wb : pipeline(pipe.WB)
         switch(r_wb_rfwt_sel)
         {
             case RFWT_ALU:
-                s_wb_result = s_wb_result;
+                s_wb_result = r_wb_alu;
                 break;
             case RFWT_PC:
                 s_wb_result = s_wb_pcadder;

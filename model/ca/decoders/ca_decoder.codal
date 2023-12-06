@@ -237,19 +237,19 @@ element i_hw_btype_branches
                 break;
             case BTYPE_BLT:
                 s_id_aluop = ALU_SLT;
-                s_id_branchop = BRANCH_FALSE;
+                s_id_branchop = BRANCH_COND_FALSE;
                 break;
             case BTYPE_BGE:
                 s_id_aluop = ALU_SLT;
-                s_id_branchop = BRANCH_TRUE;
+                s_id_branchop = BRANCH_COND_TRUE;
                 break;
             case BTYPE_BLTU:
                 s_id_aluop = ALU_SLTU;
-                s_id_branchop = BRANCH_FALSE;
+                s_id_branchop = BRANCH_COND_FALSE;
                 break;
             case BTYPE_BGEU:
                 s_id_aluop = ALU_SLTU;
-                s_id_branchop = BRANCH_TRUE;
+                s_id_branchop = BRANCH_COND_TRUE;
                 break;
             default:
                 codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
