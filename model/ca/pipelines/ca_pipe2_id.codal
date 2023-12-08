@@ -77,7 +77,7 @@ event id : pipeline(pipe.ID)
         s_id_stall = 0;
 
         // RFF1 control
-        if ((r_wb_rd == s_id_src1) && (r_wb_rd != 0) && (r_wb_regwrite))
+        if ((r_wb_rd == s_id_rs1) && (r_wb_rd != 0) && (r_wb_regwrite))
         {
             s_id_rff1_sel = RF1_SRC_ID;
         }
@@ -87,7 +87,7 @@ event id : pipeline(pipe.ID)
         }
             
         // RFF2 control
-        if ((r_wb_rd == s_id_src2) && (r_wb_rd != 0) && (r_wb_regwrite))
+        if ((r_wb_rd == s_id_rs2) && (r_wb_rd != 0) && (r_wb_regwrite))
         {
             s_id_rff2_sel = RF2_SRC_ID;
         }

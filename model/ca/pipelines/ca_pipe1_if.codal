@@ -44,7 +44,7 @@ event fe : pipeline(pipe.IF)
 
         if(s_me_pcsrc)
         {
-            s_if_pcin = r_me_bradd;
+            s_if_pcin = r_me_target_addr;
         }
         else
         {
@@ -74,6 +74,6 @@ event if_output : pipeline(pipe.IF)
     {
         r_id_pc     = s_if_pcin;
         r_pc        = s_if_nextpc;
-        r_id_clear  = s_me_pcsrc;
+        r_id_clear  = 0;
     };
 };

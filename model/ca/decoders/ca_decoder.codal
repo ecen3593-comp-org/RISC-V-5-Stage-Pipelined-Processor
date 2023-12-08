@@ -262,7 +262,7 @@ element i_hw_btype_branches
         s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
         s_id_immsel     = IMM_BTYPE;        // No immediate value needed
         s_id_branch_sel = BRADD_ADDR;       // These opcodes don't branch
-        s_id_rfwt_sel   = DONT_CARE;        // Register file write selection
+        s_id_rfwt_sel   = RFWT_ALU;         // Register file write selection
     };
 };
 
@@ -282,7 +282,7 @@ element i_hw_utype_ops
                 s_id_alusrc1 = ALU_SRC1_ZERO;
                 break;
             case UTYPE_AUIPC:
-                s_id_aluop = ALU_SRC1_PC;
+                s_id_alusrc1 = ALU_SRC1_PC;
                 break;
             default:
                 codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
