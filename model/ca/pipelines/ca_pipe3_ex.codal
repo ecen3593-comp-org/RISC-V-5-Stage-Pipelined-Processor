@@ -187,6 +187,7 @@ event ex : pipeline(pipe.EX)
                 break;
         }
 
+        ex_memory();
         s_ex_brimm = r_ex_pc + r_ex_immed;
 
         // Branch Selector multiplexor (Phase 7)
@@ -213,6 +214,73 @@ event ex : pipeline(pipe.EX)
     };
 };
 
+
+// Execute stage: memory operation event (Phase 8)
+event ex_memory : pipeline(pipe.EX)
+{
+    use ex_memory;
+    semantics
+    {
+        uint1 op_rw;    // load/store
+        uint2 op_type   // non-seqential/burst/idle
+
+        switch(r_ex_memop)
+        {
+            case MEM_SB:
+                op_rw           = CP_AHB_WRITE;
+                op_type         = CP_AHB_NONSEQ;
+                s_ex_memsize    = CP_AHB_SIZE_8;
+                break;
+            case MEM_SH:
+                op_rw           = CP_AHB_WRITE;
+                op_type         = CP_AHB_NONSEQ;
+                s_ex_memsize    = CP_AHB_SIZE_16;
+                break;
+            case MEM_SW:
+                op_rw           = CP_AHB_WRITE;
+                op_type         = CP_AHB_NONSEQ;
+                s_ex_memsize    = CP_AHB_SIZE_32;
+                break;
+            case MEM_LB:
+                op_rw           = CP_AHB_READ;
+                op_type         = CP_AHB_NONSEQ;
+                s_ex_memsize    = CP_AHB_SIZE_8;
+                break;
+            case MEM_LH:
+                op_rw           = CP_AHB_READ;
+                op_type         = CP_AHB_NONSEQ;
+                s_ex_memsize    = CP_AHB_SIZE_16;
+                break;
+            case MEM_LW:
+                op_rw           = CP_AHB_READ;
+                op_type         = CP_AHB_NONSEQ;
+                s_ex_memsize    = CP_AHB_SIZE_32;
+                break;
+            case MEM_LBU:
+                op_rw           = CP_AHB_READ;
+                op_type         = CP_AHB_NONSEQ;
+                s_ex_memsize    = CP_AHB_SIZE_8;
+                break;
+            case MEM_LHU:
+                op_rw           = CP_AHB_READ;
+                op_type         = CP_AHB_NONSEQ;
+                s_ex_memsize    = CP_AHB_SIZE_16;
+                break;
+            default:
+                op_rw           = DONT_CARE;
+                op_type         = CP_AHB_IDLE;
+                s_ex_memsize    = DONT_CARE;
+                break;
+        }
+
+        ldst.transport(CP_PHS_ADDRESS, op_type , op_rw, s_ex_aluout, s_ex_memsize);
+        s_ex_encoded_data = ldst.encode_data(s_ex_fwdB_out, s_ex_aluout, s_ex_memsize);
+    
+        s_me_stall = s_ex_stall;
+    }
+};
+
+
 event ex_output : pipeline(pipe.EX)
 {
     semantics
@@ -222,9 +290,12 @@ event ex_output : pipeline(pipe.EX)
         r_me_rd             = r_ex_rd;
         r_me_regwrite       = r_ex_regwrite;
         r_me_alu            = s_ex_aluout;
-        r_me_brnchop        = r_ex_brnchop;     // New pipeline register (Phase 7)
-        r_me_zero           = s_ex_zero;        // New pipeline register (Phase 7)
-        r_me_target_addr    = s_ex_target_addr; // New pipeline register (Phase 7)
-        r_me_rfwt_sel       = r_ex_rfwt_sel;    // New pipeline register (Phase 7)
+        r_me_brnchop        = r_ex_brnchop;         // New pipeline register (Phase 7)
+        r_me_zero           = s_ex_zero;            // New pipeline register (Phase 7)
+        r_me_target_addr    = s_ex_target_addr;     // New pipeline register (Phase 7)
+        r_me_rfwt_sel       = r_ex_rfwt_sel;        // New pipeline register (Phase 7)
+        r_me_memop          = r_ex_memop;           // Pipeline memop to the memory stage (Phase 8)
+        r_me_memsize        = s_ex_memsize;         // Pipeline memsize to the memory stage (Phase 8)
+        r_me_encoded_data   = s_ex_encoded_data;    // Pipeline encoded_data to the memory stage (Phase 8)
     };
 };

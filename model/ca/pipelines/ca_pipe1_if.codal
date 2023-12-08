@@ -56,7 +56,10 @@ event fe : pipeline(pipe.IF)
 
         // Set all the clear signals.
         s_id_clear = 0;
-        s_ex_clear = s_me_pcsrc;
+
+        // Simulate "bubble" when a load hazard is detected (Phase 8)
+        s_ex_clear = s_me_pcsrc | s_id_loadhaz;
+
         s_me_clear = s_me_pcsrc;
         s_wb_clear = 0;
 
@@ -72,8 +75,17 @@ event if_output : pipeline(pipe.IF)
 {
     semantics
     {
+        if(s_id_stall == 1)
+        {
+            r_pc = s_if_pcin;
+        }
+        else
+        {
+            r_pc = s_if_nextpc;
+        }
+        
         r_id_pc     = s_if_pcin;
-        r_pc        = s_if_nextpc;
         r_id_clear  = 0;
+        r_id_stall  = s_id_stall;
     };
 };

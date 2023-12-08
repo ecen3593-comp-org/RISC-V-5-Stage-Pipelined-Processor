@@ -47,6 +47,10 @@ event wb : pipeline(pipe.WB)
                 s_wb_result = s_wb_pcadder;
                 break;
             case RFWT_MEM:
+                // Write the memory result from the write back stage (Phase 8)
+                s_wb_result = r_wb_mem_result;
+                break;
+            default:
                 s_wb_result = 0;
                 codasip_fatal(RFWT_ERROR, "Default case WB_RFWT_SEL: %d\n", r_wb_rfwt_sel);
                 break;

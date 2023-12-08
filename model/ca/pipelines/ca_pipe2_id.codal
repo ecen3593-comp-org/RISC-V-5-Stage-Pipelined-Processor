@@ -43,7 +43,23 @@ event id : pipeline(pipe.ID)
 
         if_code.transport(CP_PHS_DATA, cache_ready, cache_response, id_instr_temp);
 
-        s_id_instr = r_id_clear ? NOP_INSTRUCTION : id_instr_temp;
+        // s_id_instr = r_id_clear ? NOP_INSTRUCTION : id_instr_temp;
+        
+        // Instruction logic to account for stalling (Phase 8)
+        if(r_id_clear)
+        {
+            s_id_instr = NOP_INSTRUCTION;
+        }
+        else if(r_id_stall)
+        {
+            s_id_instr = r_id_instr_preserved;
+            r_id_pc = r_id_pc_preserved;
+        }
+        else
+        {
+            s_id_instr = id_instr_temp;
+        }
+
 
         // Opcode
         // NOTE: '..' indicates extracted bits from a bitfield
@@ -58,6 +74,14 @@ event id : pipeline(pipe.ID)
         
         // Destination register
         s_id_rd = s_id_instr [11..7];
+
+        if((s_id_rs1 == r_ex_rd) || (s_id_rs2 == r_ex_rd))
+        {
+            if(r_ex_instr >= MEM_LB)
+            {
+                s_id_instr = NOP_INSTRUCTION;
+            }
+        }
         
         // Immediate decode
         // Extracts 12-bits from s_id_instr, casts it to a signed 12-bit int,
@@ -74,7 +98,7 @@ event id : pipeline(pipe.ID)
         s_id_reg2 = rf_xpr.src2[s_id_rs2];
 
         // Set local stall.
-        s_id_stall = 0;
+        s_id_stall = s_ex_stall || s_id_loadhaz;
 
         // RFF1 control
         if ((r_wb_rd == s_id_rs1) && (r_wb_rd != 0) && (r_wb_regwrite))

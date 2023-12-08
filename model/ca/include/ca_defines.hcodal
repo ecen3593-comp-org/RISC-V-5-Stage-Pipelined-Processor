@@ -47,6 +47,7 @@
 #define BRANCH_W        bitsizeof(enum branchop)    // New signal size (Phase 7)
 #define TARGETSEL_W     bitsizeof(enum target_sel)  // New signal size (Phase 7)
 #define WBSEL_W         bitsizeof(enum wb_sel)      // New signal size (Phase 7)
+#define MEMOP_W         bitsizeof(enum mem_op)      // New signal size (Phase 8)
 // -------------------------------------------------------------------------------------------------
 // Enumerations
 // -------------------------------------------------------------------------------------------------
@@ -84,15 +85,18 @@ enum immed_sel
     IMM_STYPE
 };
 
-// Branch operations (Phase 7)
-enum branchop
+enum mem_op
 {
-    BRANCH_FALSE,       /* Never branch (default) */
-    BRANCH_TRUE,        /* Always branch (jump) */
-    BRANCH_COND_FALSE,  /* Branch if ALU output != zero */
-    BRANCH_COND_TRUE    /* Branch if ALU output == 0 */
+    MEM_NOP,
+    MEM_SB,
+    MEM_SH,
+    MEM_SW,
+    MEM_LB,
+    MEM_LH,
+    MEM_LW,
+    MEM_LBU,
+    MEM_LHU
 };
-
 
 // -------------------------------------------------------------------------------------------------
 // EX stage
@@ -112,12 +116,6 @@ enum aluop
     ALU_SRA,    /* Phase 7: ALU Function */
     ALU_OR,     /* Phase 7: ALU Function */
     ALU_AND     /* Phase 7: ALU Function */
-};
-
-enum regwrite
-{
-    WE_FALSE,
-    WE_TRUE,
 };
 
 // Phase 7 ALU Source 1 multiplexor
@@ -167,16 +165,31 @@ enum target_sel
 // ME stage
 // -------------------------------------------------------------------------------------------------
 
+// Branch operations (Phase 7)
+enum branchop
+{
+    BRANCH_FALSE,       /* Never branch (default) */
+    BRANCH_TRUE,        /* Always branch (jump) */
+    BRANCH_COND_FALSE,  /* Branch if ALU output != zero */
+    BRANCH_COND_TRUE    /* Branch if ALU output == 0 */
+};
+
 // -------------------------------------------------------------------------------------------------
 // WB stage
 // -------------------------------------------------------------------------------------------------
+
+enum regwrite
+{
+    WE_FALSE,
+    WE_TRUE,
+};
 
 // WB stage multiplexor (Phase 7)
 enum wb_sel
 {
     RFWT_ALU,   /* Write ALU output to regfile */
     RFWT_PC,    /* Write PC + 4 to regfile (jal and jalr instructions)*/
-    RFWT_MEM    /* Write value read from memory to regfile (load instructions) */
+    RFWT_MEM    /* Write value read from register file to memory (Phase 8) */
 };
 
 // -------------------------------------------------------------------------------------------------
