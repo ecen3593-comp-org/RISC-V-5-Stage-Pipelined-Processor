@@ -296,6 +296,7 @@ element i_hw_utype_ops
                 break;
         }
 
+        s_id_aluop      = ALU_ADD;          // ALU operation for U-type branches is add (Phase 7)
         s_id_regwrite   = WE_TRUE;          // Enable register file write
         s_id_alusrc2    = ALU2_IMM;         // ALU source 1 operand
         s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
