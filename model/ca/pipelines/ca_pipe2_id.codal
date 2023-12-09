@@ -192,23 +192,25 @@ event id_output : pipeline(pipe.ID)
         // -----------------------------------------------------------------------------------------
         // Pipeline output
         // -----------------------------------------------------------------------------------------
-        r_ex_pc         = r_id_pc;
-        r_ex_instr      = s_id_instr;
-        r_ex_rd         = s_id_rd;
+        r_ex_pc                 = r_id_pc;
+        r_ex_instr              = s_id_instr;
+        r_ex_rd                 = s_id_rd;
         // r_ex_reg1       = s_id_reg1;     // Not used as of Phase 6
         // r_ex_reg2       = s_id_reg2;     // Not used as of Phase 6
-        r_ex_aluop      = s_id_aluop;
-        r_ex_alusrc1    = s_id_alusrc1;     // New pipelined register (Phase 7)
-        r_ex_alusrc2    = s_id_alusrc2;
-        r_ex_regwrite   = s_id_regwrite;
-        r_ex_halt       = s_id_halt;
-        r_ex_immed      = s_id_immed_out;
-        r_ex_src1       = s_id_src1;        // New pipelined register (Phase 6)
-        r_ex_src2       = s_id_src2;        // New pipelined register (Phase 6)
-        r_ex_rs1        = s_id_rs1;         // New pipelined register (Phase 6)
-        r_ex_rs2        = s_id_rs2;         // New pipelined register (Phase 6)
-        r_ex_brnchop    = s_id_branchop;    // New pipelined register (Phase 7)
-        r_ex_rfwt_sel   = s_id_rfwt_sel;    // New pipelined register (Phase 7)
-        r_ex_branchsel  = s_id_branch_sel;  // New pipelined register (Phase 7)
+        r_ex_aluop              = s_id_aluop;
+        r_ex_alusrc1            = s_id_alusrc1;     // New pipelined register (Phase 7)
+        r_ex_alusrc2            = s_id_alusrc2;
+        r_ex_regwrite           = s_id_regwrite;
+        r_ex_halt               = s_id_halt;
+        r_ex_immed              = s_id_immed_out;
+        r_ex_src1               = s_id_src1;        // New pipelined register (Phase 6)
+        r_ex_src2               = s_id_src2;        // New pipelined register (Phase 6)
+        r_ex_rs1                = s_id_rs1;         // New pipelined register (Phase 6)
+        r_ex_rs2                = s_id_rs2;         // New pipelined register (Phase 6)
+        r_ex_brnchop            = s_id_branchop;    // New pipelined register (Phase 7)
+        r_ex_rfwt_sel           = s_id_rfwt_sel;    // New pipelined register (Phase 7)
+        r_ex_branchsel          = s_id_branch_sel;  // New pipelined register (Phase 7)
+        r_id_instr_preserved    = s_id_instr;       // Pipelined register for instruction preservation (Phase 8)
+        r_id_pc_preserved       = r_id_pc;          // Pipelined regsiter for PC preservation (Phase 8)     
     };
 };
