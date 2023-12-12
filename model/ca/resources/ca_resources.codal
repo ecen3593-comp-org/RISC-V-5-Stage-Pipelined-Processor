@@ -129,7 +129,7 @@ signal bit[WORD_W]          s_ex_aluout;        // ALU output (Phase 7)
 signal bit[BOOLEAN_BIT]     s_ex_zero;          // ALU zero signal (Phase 7)
 signal bit[WORD_W]          s_ex_src1;          // Source 1 register signal (Phase 7)
 signal bit[WORD_W]          s_ex_src2;          // Source 2 register signal (Phase 7)
-signal bit[uint2]           s_ex_memsize;       // Size of load/store operation (Phase 8)
+signal bit[TWO_BIT]         s_ex_memsize;       // Size of load/store operation (Phase 8)
 signal bit[WORD_W]          s_ex_encoded_data;  // Return value of the encode data function (Phase 8)
 
 // -------------------------------------------------------------------------------------------------
@@ -148,9 +148,11 @@ register bit[ADDR_W]        r_me_target_addr    { pipeline = pipe.ME; };    // P
 register bit[WBSEL_W]       r_me_rfwt_sel       { pipeline = pipe.ME; };    // Pipelined register file select register (Phase 7)
 register bit[ADDR_W]        r_me_bradd          { pipeline = pipe.ME; };    // Pipelined branch address (Phase 7)
 register bit[MEMOP_W]       r_me_memop          { pipeline = pipe.ME; };    // Pipelined memory operation register (Phase 8)
-register bit[uint2]         r_me_memsize        { pipeline = pipe.ME; };    // Pipelined memory operation size (Phase 8)
+register bit[TWO_BIT]       r_me_memsize        { pipeline = pipe.ME; };    // Pipelined memory operation size (Phase 8)
 register bit[WORD_W]        r_me_encoded_data   { pipeline = pipe.ME; };    // Pipelined encoded data value register (Phase 8)
 register bit[WORD_W]        r_me_decoded_data   { pipeline = pipe.ME; };    // Pipelined decoded data value register (Phase 8)
+register bit[WORD_W]        r_me_wtdat          { pipeline = pipe.ME; };    // Pipelined write data register (Phase 8)
+
 
 /* Memory state signals */
 signal bit[ADDR_W]          s_me_pcsrc;         // PC source (Phase 7)

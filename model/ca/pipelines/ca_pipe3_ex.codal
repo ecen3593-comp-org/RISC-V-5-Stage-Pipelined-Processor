@@ -33,6 +33,7 @@
 event ex : pipeline(pipe.EX)
 {
     use ex_output;
+    use ex_memory;
 
     semantics
     {
@@ -218,11 +219,10 @@ event ex : pipeline(pipe.EX)
 // Execute stage: memory operation event (Phase 8)
 event ex_memory : pipeline(pipe.EX)
 {
-    use ex_memory;
     semantics
     {
         uint1 op_rw;    // load/store
-        uint2 op_type   // non-seqential/burst/idle
+        uint2 op_type;  // non-seqential/burst/idle
 
         switch(r_ex_memop)
         {
@@ -277,7 +277,7 @@ event ex_memory : pipeline(pipe.EX)
         s_ex_encoded_data = ldst.encode_data(s_ex_fwdB_out, s_ex_aluout, s_ex_memsize);
     
         s_me_stall = s_ex_stall;
-    }
+    };
 };
 
 

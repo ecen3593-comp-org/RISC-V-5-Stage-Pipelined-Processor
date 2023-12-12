@@ -33,6 +33,7 @@
 event me : pipeline(pipe.ME)
 {
     use me_output;
+    use me_memory;
 
     semantics
     {
@@ -63,8 +64,6 @@ event me : pipeline(pipe.ME)
 // Memory stage: memory operation event (Phase 8)
 event me_memory : pipeline(pipe.ME)
 {
-    use me_memory;
-
     semantics
     {
         uint1 data_ready;       // Indicates if data is ready
@@ -75,7 +74,8 @@ event me_memory : pipeline(pipe.ME)
         {
             data_ready = 1;
             data_response = 1;
-            load_data_temp = DONT_CARE;
+            load_data_temp = 0;
+            s_me_decoded_data = 0;
         }
         else
         {
@@ -89,7 +89,7 @@ event me_memory : pipeline(pipe.ME)
                 s_me_mem_result = (int32)(int8)s_me_decoded_data;
                 break;
             case MEM_LH:
-                s_me_mem_result = (int32)(in16)s_me_decoded_data;
+                s_me_mem_result = (int32)(int16)s_me_decoded_data;
                 break;
             case MEM_LW:
                 s_me_mem_result = s_me_decoded_data;
@@ -101,10 +101,11 @@ event me_memory : pipeline(pipe.ME)
                 s_me_mem_result = (uint32)(uint16)s_me_decoded_data;
                 break;
             default:
+                s_me_mem_result = 0;
                 break;
         }
         
-        if((data_ready == 0) & (data_response == 0))
+        if((data_ready == 0) && (data_response == 0))
         {
             s_me_stall = 1;
         }
@@ -112,7 +113,7 @@ event me_memory : pipeline(pipe.ME)
         {
             s_me_stall = 0;
         }
-    }
+    };
 };
 
 

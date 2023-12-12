@@ -58,7 +58,8 @@ event fe : pipeline(pipe.IF)
         s_id_clear = 0;
 
         // Simulate "bubble" when a load hazard is detected (Phase 8)
-        s_ex_clear = s_me_pcsrc | s_id_loadhaz;
+        // s_ex_clear = s_me_pcsrc | s_id_loadhaz;
+        s_ex_clear = s_me_pcsrc | s_id_stall;
 
         s_me_clear = s_me_pcsrc;
         s_wb_clear = 0;

@@ -74,14 +74,6 @@ event id : pipeline(pipe.ID)
         
         // Destination register
         s_id_rd = s_id_instr [11..7];
-
-        if((s_id_rs1 == r_ex_rd) || (s_id_rs2 == r_ex_rd))
-        {
-            if(r_ex_instr >= MEM_LB)
-            {
-                s_id_instr = NOP_INSTRUCTION;
-            }
-        }
         
         // Immediate decode
         // Extracts 12-bits from s_id_instr, casts it to a signed 12-bit int,
@@ -96,9 +88,6 @@ event id : pipeline(pipe.ID)
         // NOTE: The register file is essentially an array of 32x 32-bit registers
         s_id_reg1 = rf_xpr.src1[s_id_rs1];
         s_id_reg2 = rf_xpr.src2[s_id_rs2];
-
-        // Set local stall.
-        s_id_stall = s_ex_stall || s_id_loadhaz;
 
         // RFF1 control
         if ((r_wb_rd == s_id_rs1) && (r_wb_rd != 0) && (r_wb_regwrite))
@@ -180,6 +169,21 @@ event id : pipeline(pipe.ID)
                 break;
         }
 
+        if((r_ex_rd == s_id_rs1) || (r_ex_rd == s_id_rs2) || r_ex_rd != 0)
+        {
+            if(r_ex_memop >= MEM_LB)
+            {
+                s_id_loadhaz = 1;
+            }
+            else
+            {
+                s_id_loadhaz = 0;
+            }
+        }
+
+        // Set local stall.
+        s_id_stall = s_ex_stall || s_id_loadhaz;
+
         // Update the registers
         id_output();
     };
@@ -211,6 +215,7 @@ event id_output : pipeline(pipe.ID)
         r_ex_rfwt_sel           = s_id_rfwt_sel;    // New pipelined register (Phase 7)
         r_ex_branchsel          = s_id_branch_sel;  // New pipelined register (Phase 7)
         r_id_instr_preserved    = s_id_instr;       // Pipelined register for instruction preservation (Phase 8)
-        r_id_pc_preserved       = r_id_pc;          // Pipelined regsiter for PC preservation (Phase 8)     
+        r_id_pc_preserved       = r_id_pc;          // Pipelined regsiter for PC preservation (Phase 8)  
+        r_ex_memop              = s_id_memop;       // Pipeline the memop signal to the execute stage (Phase 8)   
     };
 };
