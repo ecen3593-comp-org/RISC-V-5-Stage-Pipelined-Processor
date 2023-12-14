@@ -37,19 +37,12 @@ event ex : pipeline(pipe.EX)
 
     semantics
     {
-        // HALT instruction detection
-        if(r_ex_halt == HALT_HALT)
-        {
-            codasip_break();
-            codasip_info(INFO_GENERAL, "Halt Instructions Indicated");
-        }
-
         // Forward Control Select1
-        if((r_ex_rs1 == r_me_rd) && (r_me_rd != 0) && (r_me_regwrite))
+        if((r_me_rd == r_ex_rs1) && (r_me_rd != 0) && (r_me_regwrite == WE_TRUE))
         {
             s_ex_fwdA_sel = FWDA_ALU_ME;
         }
-        else if((r_ex_rs1 == r_wb_rd) && (r_wb_rd != 0) && (r_wb_regwrite))
+        else if((r_wb_rd == r_ex_rs1) && (r_wb_rd != 0) && (r_wb_regwrite == WE_TRUE))
         {
             s_ex_fwdA_sel = FWDA_DATA_WB;
         }
@@ -59,11 +52,11 @@ event ex : pipeline(pipe.EX)
         }
         
         // Forward Control Select2
-        if((r_ex_rs2 == r_me_rd) && (r_me_rd != 0) && (r_me_regwrite))
+        if((r_me_rd == r_ex_rs2) && (r_me_rd != 0) && (r_me_regwrite == WE_TRUE))
         {
             s_ex_fwdB_sel = FWDB_ALU_ME;
         }
-        else if((r_ex_rs2 == r_wb_rd) && (r_wb_rd != 0) && (r_wb_regwrite))
+        else if((r_wb_rd == r_ex_rs2) && (r_wb_rd != 0) && (r_wb_regwrite == WE_TRUE))
         {
             s_ex_fwdB_sel = FWDB_DATA_WB;
         }
@@ -86,8 +79,8 @@ event ex : pipeline(pipe.EX)
                 s_ex_fwdA_out = s_wb_result;
                 break;
             default:
-                // s_ex_fwdA_out = 0;
-                // codasip_fatal(ALU_ERROR, "Default case EX_FWDA Multiplexor: %d\n", s_ex_fwdA_sel);
+                s_ex_fwdA_out = 0;
+                codasip_fatal(SRC1_ERROR, "Default case EX_FWDA Multiplexor: %d\n", s_ex_fwdA_sel);
                 break;
         }
 
@@ -104,8 +97,8 @@ event ex : pipeline(pipe.EX)
                 s_ex_fwdB_out = s_wb_result;
                 break;
             default:
-                // s_ex_fwdB_out = 0;
-                // codasip_fatal(ALU_ERROR, "Default case EX_FWDB Multiplexor: %d\n", s_ex_fwdB_sel);
+                s_ex_fwdB_out = 0;
+                codasip_fatal(SRC2_ERROR, "Default case EX_FWDB Multiplexor: %d\n", s_ex_fwdB_sel);
                 break;
         }
 
@@ -183,12 +176,22 @@ event ex : pipeline(pipe.EX)
                 s_ex_aluout = s_ex_src1 & s_ex_src2;
                 break;
             default:
-                // s_ex_aluout = 0;
+                s_ex_aluout = 0;
                 codasip_fatal(ALU_ERROR, "Default case EX_ALU: %d\n", r_ex_aluop);
                 break;
         }
 
         ex_memory();
+        s_me_stall = s_ex_stall;
+
+        // HALT instruction detection
+        if(r_ex_halt == HALT_HALT)
+        {
+            codasip_break();
+            codasip_info(INFO_GENERAL, "Halt Instructions Indicated");
+        }
+
+        // Branch address creation
         s_ex_brimm = r_ex_pc + r_ex_immed;
 
         // Branch Selector multiplexor (Phase 7)
@@ -202,7 +205,7 @@ event ex : pipeline(pipe.EX)
                 break;
             default:
                 s_ex_target_addr = 0;
-                codasip_fatal(TARGADRR_ERROR, "Default case EX_BRANCHSEL: %d\n", r_ex_branchsel);
+                codasip_fatal(TARGADDR_ERROR, "Default case EX_BRANCHSEL: %d\n", r_ex_branchsel);
                 break;
         }
 
@@ -226,6 +229,11 @@ event ex_memory : pipeline(pipe.EX)
 
         switch(r_ex_memop)
         {
+            case MEM_NOP:
+                op_rw           = DONT_CARE;
+                op_type         = CP_AHB_IDLE;
+                s_ex_memsize    = DONT_CARE;
+                break;
             case MEM_SB:
                 op_rw           = CP_AHB_WRITE;
                 op_type         = CP_AHB_NONSEQ;
@@ -267,16 +275,12 @@ event ex_memory : pipeline(pipe.EX)
                 s_ex_memsize    = CP_AHB_SIZE_16;
                 break;
             default:
-                op_rw           = DONT_CARE;
-                op_type         = CP_AHB_IDLE;
-                s_ex_memsize    = DONT_CARE;
+                codasip_fatal(MEM_ERROR, "Fail in ex_memory: %d\n", r_ex_memop);
                 break;
         }
 
         ldst.transport(CP_PHS_ADDRESS, op_type , op_rw, s_ex_aluout, s_ex_memsize);
         s_ex_encoded_data = ldst.encode_data(s_ex_fwdB_out, s_ex_aluout, s_ex_memsize);
-    
-        s_me_stall = s_ex_stall;
     };
 };
 

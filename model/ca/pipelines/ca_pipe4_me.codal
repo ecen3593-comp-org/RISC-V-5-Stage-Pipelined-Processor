@@ -44,10 +44,13 @@ event me : pipeline(pipe.ME)
                 s_me_pcsrc = r_me_zero;
                 break;
             case BRANCH_COND_FALSE:
-                s_me_pcsrc = ~(r_me_zero);
+                s_me_pcsrc = ~r_me_zero;
                 break;
             case BRANCH_TRUE:
                 s_me_pcsrc = 1;
+                break;
+            case BRANCH_FALSE:
+                s_me_pcsrc = 0;
                 break;
             default:
                 s_me_pcsrc = 0;
@@ -79,7 +82,7 @@ event me_memory : pipeline(pipe.ME)
         }
         else
         {
-            ldst.transport(CP_PHS_DATA, data_ready, data_response, load_data_temp, r_me_wtdat);
+            ldst.transport(CP_PHS_DATA, data_ready, data_response, load_data_temp, r_me_encoded_data);
             s_me_decoded_data = ldst.decode_data(load_data_temp, r_me_alu, r_me_memsize);
         }
         
@@ -107,11 +110,11 @@ event me_memory : pipeline(pipe.ME)
         
         if((data_ready == 0) && (data_response == 0))
         {
-            s_me_stall = 1;
+            s_me_stall = true;
         }
         else
         {
-            s_me_stall = 0;
+            s_me_stall = false;
         }
     };
 };
@@ -127,5 +130,6 @@ event me_output : pipeline(pipe.ME)
         r_wb_regwrite       = r_me_regwrite;
         r_wb_alu            = r_me_alu;
         r_wb_rfwt_sel       = r_me_rfwt_sel;
+        r_wb_mem_result     = s_me_mem_result;
     };
 };

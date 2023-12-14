@@ -74,6 +74,11 @@ event id : pipeline(pipe.ID)
         
         // Destination register
         s_id_rd = s_id_instr [11..7];
+
+        // Read input register(s) from the Register File (rf_xpr)
+        // NOTE: The register file is essentially an array of 32x 32-bit registers
+        s_id_reg1 = rf_xpr.src1[s_id_rs1];
+        s_id_reg2 = rf_xpr.src2[s_id_rs2];
         
         // Immediate decode
         // Extracts 12-bits from s_id_instr, casts it to a signed 12-bit int,
@@ -84,58 +89,53 @@ event id : pipeline(pipe.ID)
         s_id_immeds = ((int32)(int12)(s_id_instr [31..25] :: s_id_instr [11..7]));  // S-type immediate
         s_id_immedj = ((int32)(int20)(s_id_instr [31..31] :: s_id_instr [19..12] :: s_id_instr [20..20] :: s_id_instr [30..21])) << 1;   // J_Type immediate
 
-        // Read input register(s) from the Register File (rf_xpr)
-        // NOTE: The register file is essentially an array of 32x 32-bit registers
-        s_id_reg1 = rf_xpr.src1[s_id_rs1];
-        s_id_reg2 = rf_xpr.src2[s_id_rs2];
-
         // RFF1 control
-        if ((r_wb_rd == s_id_rs1) && (r_wb_rd != 0) && (r_wb_regwrite))
-        {
-            s_id_rff1_sel = RF1_SRC_ID;
-        }
-        else
+        if ((r_wb_rd == s_id_rs1) && (r_wb_rd != 0) && (r_wb_regwrite == WE_TRUE))
         {
             s_id_rff1_sel = DATA1_WB;
         }
+        else
+        {
+            s_id_rff1_sel = RF1_SRC_ID;
+        }
             
         // RFF2 control
-        if ((r_wb_rd == s_id_rs2) && (r_wb_rd != 0) && (r_wb_regwrite))
-        {
-            s_id_rff2_sel = RF2_SRC_ID;
-        }
-        else
+        if ((r_wb_rd == s_id_rs2) && (r_wb_rd != 0) && (r_wb_regwrite == WE_TRUE))
         {
             s_id_rff2_sel = DATA2_WB;
         }
+        else
+        {
+            s_id_rff2_sel = RF2_SRC_ID;
+        }
     
-        switch (s_id_rff1_sel)
+        switch(s_id_rff1_sel)
         {
             case RF1_SRC_ID:
-                s_id_src1 = s_wb_result;
+                s_id_src1 = s_id_reg1;
                 break;
 
             case DATA1_WB:
-                s_id_src1 = s_id_reg1;
+                s_id_src1 = s_wb_result;
                 break;
             default:
                 s_id_src1 = 0;
-                // codasip_fatal(SRC2_ERROR, "Default case S_ID_SRC1: %d\n", s_id_rff1_sel);
+                codasip_fatal(SRC2_ERROR, "Default case S_ID_SRC1: %d\n", s_id_rff1_sel);
                 break;
         }
 
-        switch (s_id_rff2_sel)
+        switch(s_id_rff2_sel)
         {
             case RF2_SRC_ID:
-                s_id_src2 = s_wb_result;
+                s_id_src2 = s_id_reg2;
                 break;
 
             case DATA2_WB:
-                s_id_src2 = s_id_reg2;
+                s_id_src2 = s_wb_result;
                 break;
             default:
                 s_id_src2 = 0;
-                // codasip_fatal(SRC2_ERROR, "Default case S_ID_SRC2: %d\n", s_id_rff2_sel);
+                codasip_fatal(SRC2_ERROR, "Default case S_ID_SRC2: %d\n", s_id_rff2_sel);
                 break;
         }
 
@@ -164,21 +164,38 @@ event id : pipeline(pipe.ID)
                 s_id_immed_out = 0;
                 break;
             default:
-                s_id_immed_out = IMM_NONE;
+                s_id_immed_out = 0;
                 codasip_fatal(IMM_ERROR, "Default case S_ID_IMMSEL: %d\n", s_id_immsel);
                 break;
         }
 
-        if((r_ex_rd == s_id_rs1) || (r_ex_rd == s_id_rs2) || r_ex_rd != 0)
+        if((r_ex_rd == s_id_rs1) || (r_ex_rd == s_id_rs2) || (r_ex_rd != 0))
         {
-            if(r_ex_memop >= MEM_LB)
+            switch(r_ex_memop)
             {
-                s_id_loadhaz = 1;
+                case MEM_LB:
+                    s_id_loadhaz = 1;
+                    break;
+                case MEM_LBU:
+                    s_id_loadhaz = 1;
+                    break; 
+                case MEM_LH:
+                    s_id_loadhaz = 1;
+                    break;
+                case MEM_LHU:
+                    s_id_loadhaz = 1;
+                    break; 
+                case MEM_LW:
+                    s_id_loadhaz = 1;
+                    break; 
+                default:
+                    s_id_loadhaz = 0;
+                    break;
             }
-            else
-            {
-                s_id_loadhaz = 0;
-            }
+        }
+        else
+        {
+            s_id_loadhaz = 0;
         }
 
         // Set local stall.

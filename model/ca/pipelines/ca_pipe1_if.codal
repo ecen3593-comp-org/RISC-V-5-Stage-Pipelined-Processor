@@ -41,6 +41,8 @@ event fe : pipeline(pipe.IF)
         // -----------------------------------------------------------------------------------------
         // Pipeline control
         // -----------------------------------------------------------------------------------------
+        uint4 cache_hprot;
+        cache_hprot = 0;
 
         if(s_me_pcsrc)
         {
@@ -51,7 +53,7 @@ event fe : pipeline(pipe.IF)
             s_if_pcin = r_pc;
         }
 
-        if_code.transport(CP_PHS_ADDRESS, CP_AHB_NONSEQ, CP_AHB_READ, s_if_pcin, CP_AHB_SIZE_32);
+        if_code.transport(CP_PHS_ADDRESS, CP_AHB_NONSEQ, CP_AHB_READ, s_if_pcin [31..2] :: (uint2)0, CP_AHB_SIZE_32, cache_hprot, CP_AHB_UNLOCK);
         s_if_nextpc = s_if_pcin + INSTR_SIZE;
 
         // Set all the clear signals.
@@ -59,13 +61,13 @@ event fe : pipeline(pipe.IF)
 
         // Simulate "bubble" when a load hazard is detected (Phase 8)
         // s_ex_clear = s_me_pcsrc | s_id_loadhaz;
-        s_ex_clear = s_me_pcsrc | s_id_stall;
+        s_ex_clear = s_me_pcsrc || s_id_stall;
 
         s_me_clear = s_me_pcsrc;
         s_wb_clear = 0;
 
         // Set the local stall signal.
-        s_if_stall = 0;
+        // s_if_stall = 0;
 
         // Update the registers
         if_output();
@@ -76,13 +78,13 @@ event if_output : pipeline(pipe.IF)
 {
     semantics
     {
-        if(s_id_stall == 1)
+        if(s_id_stall == 0)
         {
-            r_pc = s_if_pcin;
+            r_pc = s_if_nextpc;
         }
         else
         {
-            r_pc = s_if_nextpc;
+            r_pc = s_if_pcin;
         }
         
         r_id_pc     = s_if_pcin;

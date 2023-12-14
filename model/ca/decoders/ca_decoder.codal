@@ -34,16 +34,16 @@
 // Decoder
 // -------------------------------------------------------------------------------------------------
 
-set dec = i_hw_halt,
-        i_hw_rtype_alu,
-        i_hw_itype_alu,
-        i_hw_alu_special,
-        i_hw_btype_branches,
-        i_hw_utype_ops,
-        i_hw_itype_jlreg,
-        i_hw_itype_jlink,
-        i_hw_load,
-        i_hw_store;
+set dec =   i_hw_halt,
+            i_hw_rtype_alu,
+            i_hw_itype_alu,
+            i_hw_alu_special,
+            i_hw_btype_branches,
+            i_hw_utype_ops,
+            i_hw_itype_jlreg,
+            i_hw_itype_jlink,
+            i_hw_load,
+            i_hw_store;
 
 // -------------------------------------------------------------------------------------------------
 // Halt instruction
@@ -65,11 +65,11 @@ element i_hw_halt
         s_id_alusrc1    = DONT_CARE;    // ALU source 1 (Phase 7)
         s_id_alusrc2    = DONT_CARE;    // ALU source 2
         s_id_halt       = HALT_HALT;    // HALT Command
-        s_id_immsel     = DONT_CARE;    // Immediate selection (Phase 7)
+        s_id_immsel     = IMM_NONE;     // Immediate selection (Phase 7)
         s_id_branchop   = BRANCH_FALSE; // Branch operation (Phase 7)
-        s_id_branch_sel = DONT_CARE;    // Branch selection (Phase 7)
-        s_id_rfwt_sel   = DONT_CARE;    // Register file write selection (Phase 7)
-        s_id_memop      = MEM_NOP;          // Memory operation signal (Phase 8)
+        s_id_branch_sel = BRADD_ADDR;   // Branch selection (Phase 7)
+        s_id_rfwt_sel   = RFWT_ALU;     // Register file write selection (Phase 7)
+        s_id_memop      = MEM_NOP;      // Memory operation signal (Phase 8)
     };
 };
 
@@ -258,6 +258,8 @@ element i_hw_btype_branches
                 s_id_branchop = BRANCH_COND_TRUE;
                 break;
             default:
+                s_id_aluop = 0;
+                s_id_branchop = 0;
                 codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
                 break;
         }
@@ -318,25 +320,17 @@ element i_hw_itype_jlreg
     binary { opc };
 
     semantics
-    {
-        if(opc == ITYPE_JALR)
-        {
-            s_id_aluop      = ALU_ADD;          // Use the add operation
-            s_id_regwrite   = WE_TRUE;          // Enable register file write
-            s_id_alusrc1    = ALU_SRC1_REG;     // ALU source 1 operand
-            s_id_alusrc2    = ALU2_IMM;         // ALU source 1 operand
-            s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
-            s_id_immsel     = IMM_ITYPE;        // I-type bits
-            s_id_branchop   = BRANCH_TRUE;      // Enable branching
-            s_id_branch_sel = BRADD_ALU;        // ALU branch selection line
-            s_id_rfwt_sel   = RFWT_PC;          // Register file write selection
-            s_id_memop      = MEM_NOP;          // Memory operation signal (Phase 8)
-        }
-        else
-        {
-            codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
-        }
-        
+    {   
+        s_id_aluop      = ALU_ADD;          // Use the add operation
+        s_id_regwrite   = WE_TRUE;          // Enable register file write
+        s_id_alusrc1    = ALU_SRC1_REG;     // ALU source 1 operand
+        s_id_alusrc2    = ALU2_IMM;         // ALU source 1 operand
+        s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
+        s_id_immsel     = IMM_ITYPE;        // I-type bits
+        s_id_branchop   = BRANCH_TRUE;      // Enable branching
+        s_id_branch_sel = BRADD_ALU;        // ALU branch selection line
+        s_id_rfwt_sel   = RFWT_PC;          // Register file write selection
+        s_id_memop      = MEM_NOP;          // Memory operation signal (Phase 8)
     };
 };
 
@@ -350,23 +344,16 @@ element i_hw_itype_jlink
 
     semantics
     {
-        if(opc == JTYPE_JAL)
-        {
-            s_id_aluop      = ALU_NOP;          // Doesn't use the ALU
-            s_id_regwrite   = WE_TRUE;          // Enable register file write
-            s_id_alusrc1    = ALU_SRC1_PC;      // ALU source 1 operand
-            s_id_alusrc2    = ALU2_IMM;         // ALU source 1 operand
-            s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
-            s_id_immsel     = IMM_JTYPE;        // J-type bits
-            s_id_branchop   = BRANCH_TRUE;      // Enable branching
-            s_id_branch_sel = BRADD_ADDR;       // ALU branch selection line
-            s_id_rfwt_sel   = RFWT_PC;          // Register file write selection
-            s_id_memop      = MEM_NOP;          // Memory operation signal (Phase 8)
-        }
-        else
-        {
-            codasip_fatal(DECODER_ERROR, "Default case: %d\n", opc);
-        }
+        s_id_aluop      = ALU_NOP;          // Doesn't use the ALU
+        s_id_regwrite   = WE_TRUE;          // Enable register file write
+        s_id_alusrc1    = ALU_SRC1_PC;      // ALU source 1 operand
+        s_id_alusrc2    = ALU2_IMM;         // ALU source 1 operand
+        s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
+        s_id_immsel     = IMM_JTYPE;        // J-type bits
+        s_id_branchop   = BRANCH_TRUE;      // Enable branching
+        s_id_branch_sel = BRADD_ADDR;       // ALU branch selection line
+        s_id_rfwt_sel   = RFWT_PC;          // Register file write selection
+        s_id_memop      = MEM_NOP;          // Memory operation signal (Phase 8)
     };
 };
 
@@ -398,7 +385,8 @@ element i_hw_load
                 s_id_memop = MEM_LHU;
                 break;
             default:
-                s_id_memop = MEM_NOP;
+                s_id_memop = 0;
+                codasip_fatal(MEM_ERROR, "Fail in decoder loads: %d\n", opc);
                 break;
         }
 
@@ -409,7 +397,7 @@ element i_hw_load
         s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
         s_id_immsel     = IMM_ITYPE;        // J-type bits
         s_id_branchop   = BRANCH_FALSE;     // Enable branching
-        s_id_branch_sel = DONT_CARE;        // ALU branch selection line
+        s_id_branch_sel = BRADD_ADDR;       // ALU branch selection line
         s_id_rfwt_sel   = RFWT_MEM;         // Register file write selection
     };
 
@@ -437,7 +425,8 @@ element i_hw_store
                 s_id_memop = MEM_SW;
                 break;
             default:
-                s_id_memop = MEM_NOP;
+                s_id_memop = 0;
+                codasip_fatal(MEM_ERROR, "Fail in decoder store: %d\n", opc);
                 break;
         }
 
@@ -448,7 +437,7 @@ element i_hw_store
         s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
         s_id_immsel     = IMM_STYPE;        // J-type bits
         s_id_branchop   = BRANCH_FALSE;     // Enable branching
-        s_id_branch_sel = DONT_CARE;        // ALU branch selection line
+        s_id_branch_sel = BRADD_ADDR;       // ALU branch selection line
         s_id_rfwt_sel   = RFWT_MEM;         // Register file write selection
     };
 

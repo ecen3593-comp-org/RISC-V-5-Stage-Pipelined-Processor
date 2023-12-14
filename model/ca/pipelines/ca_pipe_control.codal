@@ -31,7 +31,11 @@ event pipeline_control : pipeline(pipe.IF)
 {
     semantics
     {
-        print_pipeline();
+        #pragma simulator
+        {
+            // Prints instructions in pipeline
+            print_pipeline();
+        }
         
         if(s_if_stall)
         {
@@ -85,12 +89,5 @@ event pipeline_control : pipeline(pipe.IF)
             pipe.WB.clear();
             codasip_info(INFO_PIPE, "pipeline WB clear\n");
         }
-
-        // Flush the pipeline when a branch is taken (Phase 7)
-        // if(s_me_pcsrc)
-        // {
-        //     pipe.ID.clear();
-        //     pipe.EX.clear();
-        // }
     };
 };
