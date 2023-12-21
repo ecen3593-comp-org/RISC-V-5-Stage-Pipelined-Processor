@@ -390,15 +390,20 @@ element i_hw_load
                 break;
         }
 
-        s_id_aluop      = ALU_ADD;          // Doesn't use the ALU
         s_id_regwrite   = WE_TRUE;          // Enable register file write
+        s_id_rfwt_sel   = RFWT_MEM;         // Register file write selection
+
+        s_id_aluop      = ALU_ADD;          // Doesn't use the ALU
+        
         s_id_alusrc1    = ALU_SRC1_REG;     // ALU source 1 operand
         s_id_alusrc2    = ALU2_IMM;         // ALU source 1 operand
-        s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
         s_id_immsel     = IMM_ITYPE;        // J-type bits
+        
         s_id_branchop   = BRANCH_FALSE;     // Enable branching
         s_id_branch_sel = BRADD_ADDR;       // ALU branch selection line
-        s_id_rfwt_sel   = RFWT_MEM;         // Register file write selection
+
+        s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
+        
     };
 
 };
@@ -428,17 +433,27 @@ element i_hw_store
                 s_id_memop = 0;
                 codasip_fatal(MEM_ERROR, "Fail in decoder store: %d\n", opc);
                 break;
+
         }
 
-        s_id_aluop      = ALU_ADD;          // Doesn't use the ALU
         s_id_regwrite   = WE_FALSE;         // Enable register file write
+        s_id_rfwt_sel   = RFWT_MEM;         // Register file write selection
+
+        s_id_aluop      = ALU_ADD;          // Doesn't use the ALU
+
         s_id_alusrc1    = ALU_SRC1_REG;     // ALU source 1 operand
         s_id_alusrc2    = ALU2_IMM;         // ALU source 1 operand
-        s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
         s_id_immsel     = IMM_STYPE;        // J-type bits
+        
+
+        
+        
+        
         s_id_branchop   = BRANCH_FALSE;     // Enable branching
         s_id_branch_sel = BRADD_ADDR;       // ALU branch selection line
-        s_id_rfwt_sel   = RFWT_MEM;         // Register file write selection
+
+        s_id_halt       = HALT_NOHALT;      // HALT Command (No halt)
+        
     };
 
 };

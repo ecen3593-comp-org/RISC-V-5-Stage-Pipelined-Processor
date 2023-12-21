@@ -182,7 +182,9 @@ event ex : pipeline(pipe.EX)
         }
 
         ex_memory();
-        s_me_stall = s_ex_stall;
+        
+        // s_me_stall = s_ex_stall; zzz
+        s_ex_stall = s_me_stall;
 
         // HALT instruction detection
         if(r_ex_halt == HALT_HALT)
@@ -298,6 +300,7 @@ event ex_output : pipeline(pipe.EX)
         r_me_zero           = s_ex_zero;            // New pipeline register (Phase 7)
         r_me_target_addr    = s_ex_target_addr;     // New pipeline register (Phase 7)
         r_me_rfwt_sel       = r_ex_rfwt_sel;        // New pipeline register (Phase 7)
+
         r_me_memop          = r_ex_memop;           // Pipeline memop to the memory stage (Phase 8)
         r_me_memsize        = s_ex_memsize;         // Pipeline memsize to the memory stage (Phase 8)
         r_me_encoded_data   = s_ex_encoded_data;    // Pipeline encoded_data to the memory stage (Phase 8)
